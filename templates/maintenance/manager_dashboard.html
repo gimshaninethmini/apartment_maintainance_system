@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manager Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container">
+            <span class="navbar-brand">👔 Manager Dashboard</span>
+            <a href="{% url 'logout' %}" class="btn btn-outline-light">Logout</a>
+        </div>
+    </nav>
+    
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h4>All Maintenance Requests</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Title</th>
+                                        <th>Tenant</th>
+                                        <th>Priority</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for request in requests %}
+                                    <tr>
+                                        <td>#{{ request.id }}</td>
+                                        <td>{{ request.title }}</td>
+                                        <td>{{ request.tenant.username }}</td>
+                                        <td>
+                                            <span class="badge bg-{% if request.priority == 'high' %}danger{% elif request.priority == 'medium' %}warning{% else %}info{% endif %}">
+                                                {{ request.priority }}
+                                            </span>
+                                        </td>
+                                        <td>{{ request.status }}</td>
+                                        <td>
+                                            {% if request.status == 'submitted' or request.status == 'reviewed' %}
+                                            <form method="post" action="{% url 'assign_technician' request.id %}" style="display:inline">
+                                                {% csrf_token %}
+                                                <select name="technician_id" class="form-select form-select-sm" style="width:120px;display:inline-block">
+                                                    <option value="">Select Tech</option>
+                                                    {% for tech in technicians %}
+                                                    <option value="{{ tech.id }}">{{ tech.username }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <button type="submit" class="btn btn-sm btn-success">Assign</button>
+                                            </form>
+                                            {% else %}
+                                            <span class="text-muted">Assigned</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
