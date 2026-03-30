@@ -16,42 +16,45 @@
         </div>
     </nav>
     
+    <!-- Statistics Cards -->
     <div class="container mt-4">
-    <div class="row">
-        <div class="col-md-3">
-            <div class="card text-white bg-primary mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Total Requests</h5>
-                    <h2>{{ requests|length }}</h2>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card text-white bg-primary mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Requests</h5>
+                        <h2>{{ requests|length }}</h2>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card text-white bg-warning mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Pending</h5>
-                    <h2>{{ requests|length }}</h2>
+            <div class="col-md-3">
+                <div class="card text-white bg-warning mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Pending</h5>
+                        <h2>{{ requests|length }}</h2>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card text-white bg-success mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Completed</h5>
-                    <h2>{{ requests|length }}</h2>
+            <div class="col-md-3">
+                <div class="card text-white bg-success mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Completed</h5>
+                        <h2>{{ requests|length }}</h2>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card text-white bg-info mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">In Progress</h5>
-                    <h2>{{ requests|length }}</h2>
+            <div class="col-md-3">
+                <div class="card text-white bg-info mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">In Progress</h5>
+                        <h2>{{ requests|length }}</h2>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    </div>
+    
+    <!-- Requests Table -->
     <div class="container mt-4">
         <div class="row">
             <div class="col-12">
