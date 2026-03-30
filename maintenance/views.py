@@ -142,3 +142,11 @@ def update_status_view(request, request_id):
         return redirect('dashboard')
     
     return render(request, 'maintenance/update_status.html', {'assignment': assignment})
+
+@login_required
+def request_detail_view(request, request_id):
+    if request.user.userprofile.role != 'tenant':
+        return HttpResponseForbidden("Only tenants can view request details")
+    
+    maintenance_request = MaintenanceRequest.objects.get(id=request_id, tenant=request.user)
+    return render(request, 'maintenance/request_detail.html', {'request': maintenance_request})
