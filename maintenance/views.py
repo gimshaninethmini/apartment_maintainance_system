@@ -150,3 +150,42 @@ def request_detail_view(request, request_id):
     
     maintenance_request = MaintenanceRequest.objects.get(id=request_id, tenant=request.user)
     return render(request, 'maintenance/request_detail.html', {'request': maintenance_request})
+
+@login_required
+def edit_request_view(request, request_id):
+    if request.user.userprofile.role != 'tenant':
+        return HttpResponseForbidden("Only tenants can edit requests")
+    
+    maintenance_request = MaintenanceRequest.objects.get(id=request_id, tenant=request.user)
+    
+    if maintenance_request.status != 'submitted':
+        messages.error(request, 'Only pending requests can be edited')
+        return redirect('dashboard')
+    
+    if request.method == 'POST':
+        maintenance_request.title = request.POST['title']
+        maintenance_request.description = request.POST['description']
+        maintenance_request.priority = request.POST['priority']
+        maintenance_request.save()
+        
+        messages.success(request, 'Request updated successfully!')
+        return redirect('request_detail', request_id=maintenance_request.id)
+    
+    return render(request, 'maintenance/edit_request.html', {'request': maintenance_request})
+
+@login_required
+def cancel_request_view(request, request_id):
+    if request.user.userprofile.role != 'tenant':
+        return HttpResponseForbidden("Only tenants can cancel requests")
+    
+    maintenance_request = MaintenanceRequest.objects.get(id=request_id, tenant=request.user)
+    
+    if maintenance_request.status != 'submitted':
+        messages.error(request, 'Only pending requests can be cancelled')
+        return redirect('dashboard')
+    
+    maintenance_request.status = 'cancelled'
+    maintenance_request.save()
+    
+    messages.success(request, 'Request cancelled successfully!')
+    return redirect('dashboard')
