@@ -1,4 +1,4 @@
- from django.urls import path
+from django.urls import path
 from . import views
 
 urlpatterns = [
@@ -12,4 +12,7 @@ urlpatterns = [
     
     # NEW URL for request detail
     path('request/<int:request_id>/', views.request_detail_view, name='request_detail'),
+    path('request/<int:request_id>/edit/', views.edit_request_view, name='edit_request'),
+    path('request/<int:request_id>/cancel/', views.cancel_request_view, name='cancel_request'),
 ]
+
