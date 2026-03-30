@@ -53,6 +53,59 @@
             </div>
         </div>
     </div>
+    <div class="row mb-3">
+    <div class="col-md-6">
+        <input type="text" id="searchInput" class="form-control" placeholder="Search requests...">
+    </div>
+    <div class="col-md-3">
+        <select id="statusFilter" class="form-control">
+            <option value="all">All Status</option>
+            <option value="submitted">Submitted</option>
+            <option value="assigned">Assigned</option>
+            <option value="in_progress">In Progress</option>
+            <option value="completed">Completed</option>
+        </select>
+    </div>
+    <div class="col-md-3">
+        <select id="priorityFilter" class="form-control">
+            <option value="all">All Priority</option>
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+            <option value="emergency">Emergency</option>
+        </select>
+    </div>
+    </div>
+
+    <script>
+    // Add JavaScript for filtering
+    document.getElementById('searchInput').addEventListener('keyup', filterRequests);
+    document.getElementById('statusFilter').addEventListener('change', filterRequests);
+    document.getElementById('priorityFilter').addEventListener('change', filterRequests);
+    
+    function filterRequests() {
+        let search = document.getElementById('searchInput').value.toLowerCase();
+        let status = document.getElementById('statusFilter').value;
+        let priority = document.getElementById('priorityFilter').value;
+        let rows = document.querySelectorAll('#requestsTable tbody tr');
+        
+        rows.forEach(row => {
+            let title = row.cells[1].textContent.toLowerCase();
+            let rowStatus = row.cells[4].textContent.toLowerCase();
+            let rowPriority = row.cells[3].textContent.toLowerCase();
+            
+            let matchesSearch = title.includes(search);
+            let matchesStatus = status === 'all' || rowStatus.includes(status);
+            let matchesPriority = priority === 'all' || rowPriority.includes(priority);
+            
+            if (matchesSearch && matchesStatus && matchesPriority) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+   </script>
     
     <!-- Requests Table -->
     <div class="container mt-4">
