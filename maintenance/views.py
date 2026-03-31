@@ -80,12 +80,14 @@ def submit_request_view(request):
         title = request.POST['title']
         description = request.POST['description']
         priority = request.POST['priority']
+        image = request.FILES.get('image')
         
         request_obj = MaintenanceRequest.objects.create(
             tenant=request.user,
             title=title,
             description=description,
-            priority=priority
+            priority=priority,
+            image=image
         )
         
         messages.success(request, 'Request submitted successfully!')
