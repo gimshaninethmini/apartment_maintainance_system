@@ -89,6 +89,15 @@ def submit_request_view(request):
             priority=priority,
             image=image
         )
+
+                
+        # Create initial update log
+        UpdateLog.objects.create(
+            request=request_obj,
+            updated_by=request.user,
+            status='submitted',
+            notes='Request submitted by tenant'
+        )
         
         messages.success(request, 'Request submitted successfully!')
         return redirect('dashboard')
