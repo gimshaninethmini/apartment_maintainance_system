@@ -3,72 +3,239 @@
 <head>
     <title>Manager Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <nav class="navbar navbar-dark bg-dark">
         <div class="container">
-            <span class="navbar-brand">👔 Manager Dashboard</span>
-            <a href="{% url 'logout' %}" class="btn btn-outline-light">Logout</a>
+            <span class="navbar-brand">
+                <i class="fas fa-building"></i> Manager Dashboard
+            </span>
+            <div>
+                <a href="{% url 'logout' %}" class="btn btn-outline-light">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
         </div>
     </nav>
     
+    <!-- Statistics Cards -->
     <div class="container mt-4">
         <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header bg-primary text-white">
-                        <h4>All Maintenance Requests</h4>
-                    </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-primary mb-3">
                     <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Title</th>
-                                        <th>Tenant</th>
-                                        <th>Priority</th>
-                                        <th>Status</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for request in requests %}
-                                    <tr>
-                                        <td>#{{ request.id }}</td>
-                                        <td>{{ request.title }}</td>
-                                        <td>{{ request.tenant.username }}</td>
-                                        <td>
-                                            <span class="badge bg-{% if request.priority == 'high' %}danger{% elif request.priority == 'medium' %}warning{% else %}info{% endif %}">
-                                                {{ request.priority }}
-                                            </span>
-                                        </td>
-                                        <td>{{ request.status }}</td>
-                                        <td>
-                                            {% if request.status == 'submitted' or request.status == 'reviewed' %}
-                                            <form method="post" action="{% url 'assign_technician' request.id %}" style="display:inline">
-                                                {% csrf_token %}
-                                                <select name="technician_id" class="form-select form-select-sm" style="width:120px;display:inline-block">
-                                                    <option value="">Select Tech</option>
-                                                    {% for tech in technicians %}
-                                                    <option value="{{ tech.id }}">{{ tech.username }}</option>
-                                                    {% endfor %}
-                                                </select>
-                                                <button type="submit" class="btn btn-sm btn-success">Assign</button>
-                                            </form>
-                                            {% else %}
-                                            <span class="text-muted">Assigned</span>
-                                            {% endif %}
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
+                        <h5 class="card-title">Total Requests</h5>
+                        <h2 class="display-4">{{ total_requests }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-warning mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Pending</h5>
+                        <h2 class="display-4">{{ pending_count }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-info mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Assigned</h5>
+                        <h2 class="display-4">{{ assigned_count }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-success mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Completed</h5>
+                        <h2 class="display-4">{{ completed_count }}</h2>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    
+    <!-- Search and Filter Section -->
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col-md-4">
+                <input type="text" id="searchInput" class="form-control" placeholder="🔍 Search by title or tenant...">
+            </div>
+            <div class="col-md-3">
+                <select id="statusFilter" class="form-control">
+                    <option value="all">All Status</option>
+                    <option value="submitted">Submitted</option>
+                    <option value="assigned">Assigned</option>
+                    <option value="in_progress">In Progress</option>
+                    <option value="completed">Completed</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select id="priorityFilter" class="form-control">
+                    <option value="all">All Priority</option>
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                    <option value="emergency">Emergency</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <a href="{% url 'export_requests' %}" class="btn btn-success w-100">
+                    <i class="fas fa-download"></i> Export CSV
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Requests Table -->
+    <div class="container mt-4">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="fas fa-list"></i> All Maintenance Requests</h4>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="requestsTable">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Title</th>
+                                <th>Tenant</th>
+                                <th>Apartment</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                                <th>Submitted</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for request in requests %}
+                            <tr>
+                                <td>#{{ request.id }}</td>
+                                <td>
+                                    <a href="{% url 'manager_request_detail' request.id %}" class="text-decoration-none">
+                                        {{ request.title|truncatechars:40 }}
+                                    </a>
+                                </td>
+                                <td>{{ request.tenant.username }}</td>
+                                <td>{{ request.tenant.userprofile.apartment_number|default:"N/A" }}</td>
+                                <td>
+                                    {% if request.priority == 'emergency' %}
+                                        <span class="badge bg-danger">🚨 EMERGENCY</span>
+                                    {% elif request.priority == 'high' %}
+                                        <span class="badge bg-danger">HIGH</span>
+                                    {% elif request.priority == 'medium' %}
+                                        <span class="badge bg-warning text-dark">MEDIUM</span>
+                                    {% else %}
+                                        <span class="badge bg-info">LOW</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if request.status == 'completed' %}
+                                        <span class="badge bg-success">✅ COMPLETED</span>
+                                    {% elif request.status == 'in_progress' %}
+                                        <span class="badge bg-primary">⚙️ IN PROGRESS</span>
+                                    {% elif request.status == 'assigned' %}
+                                        <span class="badge bg-info">👨‍🔧 ASSIGNED</span>
+                                    {% elif request.status == 'submitted' %}
+                                        <span class="badge bg-secondary">📋 SUBMITTED</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ request.created_at|date:"M d, Y" }}</td>
+                                <td>
+                                    {% if request.status == 'submitted' or request.status == 'reviewed' %}
+                                    <form method="post" action="{% url 'assign_technician' request.id %}" class="d-flex gap-1">
+                                        {% csrf_token %}
+                                        <select name="technician_id" class="form-select form-select-sm" style="width:100px" required>
+                                            <option value="">Select Tech</option>
+                                            {% for tech in technicians %}
+                                            <option value="{{ tech.id }}">{{ tech.username }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <button type="submit" class="btn btn-sm btn-success">
+                                            <i class="fas fa-user-plus"></i> Assign
+                                        </button>
+                                    </form>
+                                    {% else %}
+                                    <span class="text-muted">Assigned to {{ request.assignment.technician.username|default:"someone" }}</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="8" class="text-center py-4">
+                                    <i class="fas fa-inbox fa-2x text-muted"></i>
+                                    <p class="mt-2">No maintenance requests yet</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Pagination -->
+    {% if requests.has_other_pages %}
+    <div class="container mt-3">
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                {% if requests.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page={{ requests.previous_page_number }}">Previous</a></li>
+                {% else %}
+                    <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+                {% endif %}
+                
+                {% for num in requests.paginator.page_range %}
+                    {% if requests.number == num %}
+                        <li class="page-item active"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                    {% else %}
+                        <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if requests.has_next %}
+                    <li class="page-item"><a class="page-link" href="?page={{ requests.next_page_number }}">Next</a></li>
+                {% else %}
+                    <li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
+    
+    <script>
+        // Search and Filter Functionality
+        function filterRequests() {
+            let searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            let statusFilter = document.getElementById('statusFilter').value;
+            let priorityFilter = document.getElementById('priorityFilter').value;
+            let rows = document.querySelectorAll('#requestsTable tbody tr');
+            
+            rows.forEach(row => {
+                let title = row.cells[1].textContent.toLowerCase();
+                let tenant = row.cells[2].textContent.toLowerCase();
+                let status = row.cells[5].textContent.toLowerCase();
+                let priority = row.cells[4].textContent.toLowerCase();
+                
+                let matchesSearch = title.includes(searchTerm) || tenant.includes(searchTerm);
+                let matchesStatus = statusFilter === 'all' || status.includes(statusFilter);
+                let matchesPriority = priorityFilter === 'all' || priority.includes(priorityFilter);
+                
+                if (matchesSearch && matchesStatus && matchesPriority) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+        
+        document.getElementById('searchInput').addEventListener('keyup', filterRequests);
+        document.getElementById('statusFilter').addEventListener('change', filterRequests);
+        document.getElementById('priorityFilter').addEventListener('change', filterRequests);
+    </script>
 </body>
 </html>
