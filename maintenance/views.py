@@ -164,3 +164,16 @@ def update_status_view(request, request_id):
         return redirect('dashboard')
     
     return render(request, 'maintenance/update_status.html', {'assignment': assignment})
+
+@login_required
+def manager_request_detail_view(request, request_id):
+    if request.user.userprofile.role != 'manager':
+        return HttpResponseForbidden("Only managers can view this page")
+    
+    maintenance_request = MaintenanceRequest.objects.get(id=request_id)
+    technicians = User.objects.filter(userprofile__role='technician')
+    
+    return render(request, 'maintenance/manager_request_detail.html', {
+        'request': maintenance_request,
+        'technicians': technicians
+    })
