@@ -1,48 +1,159 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Update Status</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Request Status</title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Beautiful gradient background */
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        /* White card in the middle */
+        .form-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        
+        /* Info section styling */
+        .info-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #0d6efd;
+        }
+    </style>
 </head>
 <body>
-    <nav class="navbar navbar-dark bg-primary">
-        <div class="container">
-            <span class="navbar-brand">Update Request Status</span>
-            <a href="{% url 'dashboard' %}" class="btn btn-outline-light">Back</a>
-        </div>
-    </nav>
-    
-    <div class="container mt-4">
+    <!-- ===== MAIN CONTAINER ===== -->
+    <div class="container mt-5 mb-5">
         <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card">
+            <div class="col-lg-8">
+                <!-- ===== BACK BUTTON ===== -->
+                <div class="text-white mb-4">
+                    <a href="{% url 'dashboard' %}" class="text-white text-decoration-none">
+                        <i class="fas fa-arrow-left"></i> Back to Dashboard
+                    </a>
+                </div>
+
+                <!-- ===== FORM CARD ===== -->
+                <div class="form-card">
+                    <!-- Header -->
                     <div class="card-header bg-info text-white">
-                        <h4>Request: {{ assignment.request.title }}</h4>
+                        <h4 class="mb-0"><i class="fas fa-tasks"></i> Update Request Status</h4>
                     </div>
+
+                    <!-- Card Body -->
                     <div class="card-body">
-                        <p><strong>Tenant:</strong> {{ assignment.request.tenant.username }}</p>
-                        <p><strong>Description:</strong> {{ assignment.request.description }}</p>
-                        <p><strong>Current Status:</strong> {{ assignment.request.status }}</p>
                         
+                        <!-- ===== REQUEST INFORMATION SECTION ===== -->
+                        <!-- Shows details about the request being worked on -->
+                        <div class="info-section">
+                            <h5 class="mb-3"><i class="fas fa-file-alt"></i> Request Information</h5>
+                            <div class="row mb-2">
+                                <div class="col-md-6">
+                                    <strong>Request ID:</strong> #{{ assignment.request.id }}
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Title:</strong> {{ assignment.request.title }}
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-md-6">
+                                    <strong>Tenant:</strong> {{ assignment.request.tenant.username }}
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Apartment:</strong> {{ assignment.request.tenant.userprofile.apartment_number }}
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-md-6">
+                                    <strong>Priority:</strong>
+                                    {% if assignment.request.priority == 'emergency' %}
+                                        <span class="badge bg-danger">🚨 Emergency</span>
+                                    {% elif assignment.request.priority == 'high' %}
+                                        <span class="badge bg-danger">High</span>
+                                    {% elif assignment.request.priority == 'medium' %}
+                                        <span class="badge bg-warning text-dark">Medium</span>
+                                    {% else %}
+                                        <span class="badge bg-info">Low</span>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Current Status:</strong>
+                                    {% if assignment.request.status == 'completed' %}
+                                        <span class="badge bg-success">✓ Completed</span>
+                                    {% elif assignment.request.status == 'in_progress' %}
+                                        <span class="badge bg-primary">↻ In Progress</span>
+                                    {% elif assignment.request.status == 'assigned' %}
+                                        <span class="badge bg-warning text-dark">Assigned</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">{{ assignment.request.status }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <strong>Description:</strong>
+                                <p style="background: white; padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-top: 5px;">
+                                    {{ assignment.request.description }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- ===== UPDATE FORM ===== -->
+                        <!-- Form to change status and add notes -->
                         <form method="post">
                             {% csrf_token %}
-                            <div class="mb-3">
-                                <label>New Status</label>
-                                <select name="status" class="form-control" required>
-                                    <option value="in_progress">Start Work (In Progress)</option>
-                                    <option value="completed">Mark as Completed</option>
+                            
+                            <!-- Status selection dropdown -->
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">
+                                    <i class="fas fa-sync-alt"></i> New Status
+                                </label>
+                                <select name="status" class="form-select form-select-lg" required>
+                                    <option value="">-- Select new status --</option>
+                                    <option value="reviewed">📋 Review (Mark as Reviewed)</option>
+                                    <option value="in_progress">🔧 Start Work (In Progress)</option>
+                                    <option value="completed">✅ Mark as Completed</option>
                                 </select>
+                                <small class="text-muted">Choose what stage the work is at</small>
                             </div>
-                            <div class="mb-3">
-                                <label>Notes</label>
-                                <textarea name="notes" rows="3" class="form-control"></textarea>
+
+                            <!-- Notes textarea -->
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">
+                                    <i class="fas fa-pen"></i> Work Notes / Updates
+                                </label>
+                                <textarea name="notes" rows="5" class="form-control" placeholder="Describe the work you've done or current progress...">{{ assignment.notes }}</textarea>
+                                <small class="text-muted">Tell us what you've fixed or what the current situation is</small>
                             </div>
-                            <button type="submit" class="btn btn-primary">Update Status</button>
+
+                            <!-- ===== BUTTONS ===== -->
+                            <!-- Cancel button and Submit button side by side -->
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <a href="{% url 'dashboard' %}" class="btn btn-secondary btn-lg">
+                                    <i class="fas fa-times"></i> Cancel
+                                </a>
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-check"></i> Update Status
+                                </button>
+                            </div>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Bootstrap JavaScript - Makes form work -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

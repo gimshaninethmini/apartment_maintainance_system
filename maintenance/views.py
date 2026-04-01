@@ -66,8 +66,24 @@ def dashboard_view(request):
         })
     
     elif profile.role == 'technician':
+        # Get all assignments for this technician
         assignments = Assignment.objects.filter(technician=request.user)
-        return render(request, 'maintenance/technician_dashboard.html', {'assignments': assignments})
+        
+        # COUNT TASKS BY STATUS
+        # Pending = submitted, reviewed, or assigned status
+        pending_count = assignments.filter(request__status__in=['submitted', 'reviewed', 'assigned']).count()
+        # In Progress = in_progress status
+        in_progress_count = assignments.filter(request__status='in_progress').count()
+        # Completed = completed status
+        completed_count = assignments.filter(request__status='completed').count()
+        
+        # Pass all data to the template
+        return render(request, 'maintenance/technician_dashboard.html', {
+            'assignments': assignments,
+            'pending_count': pending_count,
+            'in_progress_count': in_progress_count,
+            'completed_count': completed_count,
+        })
     
     return HttpResponseForbidden("Invalid role")
 

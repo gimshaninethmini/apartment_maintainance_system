@@ -1,0 +1,134 @@
+/* ============================================
+   TECHNICIAN MODULE CUSTOM STYLING
+   Professional styles for technician dashboard
+   ============================================ */
+
+/* ===== TABLE STYLING ===== */
+/* Make table rows look nice when hovering */
+.table tbody tr {
+    transition: all 0.2s ease;
+}
+
+.table tbody tr:hover {
+    background-color: #f8f9fa;
+    transform: scale(1.01);
+}
+
+/* ===== BADGE STYLING ===== */
+/* Smooth fade-in animation for badges */
+.badge {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== STATISTICS CARDS ===== */
+/* Make cards pop when mouse hovers */
+.stats-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stats-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+}
+
+/* ===== BUTTON STYLING ===== */
+/* Small icon buttons with smooth animation */
+.btn-icon {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+}
+
+.btn-icon:hover {
+    transform: scale(1.1);
+}
+
+/* ===== MODAL STYLING ===== */
+/* Better modal appearance */
+.modal-header {
+    border-bottom: 2px solid rgba(255,255,255,0.1);
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+/* Styles for smaller screens (tablets, phones) */
+
+/* Medium screens - tablets */
+@media (max-width: 768px) {
+    /* Make table smaller on mobile */
+    .table {
+        font-size: 0.9rem;
+    }
+    
+    /* Shrink buttons on mobile */
+    .btn-icon {
+        width: 28px;
+        height: 28px;
+        font-size: 0.85rem;
+    }
+    
+    /* Adjust badge size */
+    .badge {
+        font-size: 0.8rem;
+    }
+    
+    /* Make statistics cards stack instead of side-by-side */
+    .stats-card {
+        margin-bottom: 15px;
+    }
+    
+    /* Reduce padding on mobile */
+    .card-body {
+        padding: 10px;
+    }
+}
+
+/* Small screens - phones */
+@media (max-width: 480px) {
+    /* Smaller font for very small screens */
+    .table {
+        font-size: 0.8rem;
+    }
+    
+    /* Stack statistics vertically */
+    .row > [class*='col-'] {
+        margin-bottom: 10px;
+    }
+    
+    /* Better spacing for full-width buttons */
+    .btn {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+}
+
+/* ===== UTILITY CLASSES ===== */
+/* Helper classes for common needs */
+
+/* Make text selectable (for copying) */
+.text-selectable {
+    user-select: text;
+}
+
+/* Add subtle shadow to cards */
+.card {
+    transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
