@@ -70,6 +70,7 @@ def dashboard_view(request):
       total_requests = all_requests.count()
       pending_count = all_requests.filter(status='submitted').count()
       assigned_count = all_requests.filter(status='assigned').count()
+      in_progress_count = all_requests.filter(status='in_progress').count()
       completed_count = all_requests.filter(status='completed').count()
     
       # Get all technicians for assignment dropdown
@@ -86,6 +87,7 @@ def dashboard_view(request):
         'total_requests': total_requests,
         'pending_count': pending_count,
         'assigned_count': assigned_count,
+        'in_progress_count': in_progress_count,
         'completed_count': completed_count,
       })
     
@@ -233,3 +235,4 @@ def export_requests_csv(request):
         ])
     
     return response
+
