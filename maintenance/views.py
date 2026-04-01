@@ -177,3 +177,29 @@ def manager_request_detail_view(request, request_id):
         'request': maintenance_request,
         'technicians': technicians
     })
+
+@login_required
+def manager_update_status_view(request, request_id):
+    if request.user.userprofile.role != 'manager':
+        return HttpResponseForbidden("Only managers can update status")
+    
+    if request.method == 'POST':
+        maintenance_request = MaintenanceRequest.objects.get(id=request_id)
+        new_status = request.POST.get('status')
+        notes = request.POST.get('notes', '')
+        
+        # Update request status
+        maintenance_request.status = new_status
+        maintenance_request.save()
+        
+        # Create update log
+        UpdateLog.objects.create(
+            request=maintenance_request,
+            updated_by=request.user,
+            status=new_status,
+            notes=notes
+        )
+        
+        messages.success(request, f'Status updated to {new_status}')
+    
+    return redirect('manager_request_detail', request_id=request_id)
