@@ -6,6 +6,8 @@ from django.contrib import messages
 from .models import UserProfile, MaintenanceRequest, Assignment, UpdateLog
 from django.http import HttpResponseForbidden
 from django.core.paginator import Paginator
+import csv
+from django.http import HttpResponse
 
 def register_view(request):
     if request.method == 'POST':
@@ -203,3 +205,31 @@ def manager_update_status_view(request, request_id):
         messages.success(request, f'Status updated to {new_status}')
     
     return redirect('manager_request_detail', request_id=request_id)
+
+@login_required
+def export_requests_csv(request):
+    if request.user.userprofile.role != 'manager':
+        return HttpResponseForbidden("Only managers can export data")
+    
+    # Create HTTP response with CSV header
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="maintenance_requests.csv"'
+    
+    writer = csv.writer(response)
+    writer.writerow(['ID', 'Title', 'Tenant', 'Apartment', 'Priority', 'Status', 'Submitted Date', 'Description'])
+    
+    requests = MaintenanceRequest.objects.all().order_by('-created_at')
+    
+    for req in requests:
+        writer.writerow([
+            req.id,
+            req.title,
+            req.tenant.username,
+            req.tenant.userprofile.apartment_number or 'N/A',
+            req.priority,
+            req.status,
+            req.created_at.strftime('%Y-%m-%d %H:%M'),
+            req.description
+        ])
+    
+    return response
