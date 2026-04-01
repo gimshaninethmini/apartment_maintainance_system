@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from .models import UserProfile, MaintenanceRequest, Assignment, UpdateLog
 from django.http import HttpResponseForbidden
+from django.core.paginator import Paginator
 
 def register_view(request):
     if request.method == 'POST':
@@ -58,12 +59,33 @@ def dashboard_view(request):
         return render(request, 'maintenance/tenant_dashboard.html', {'requests': requests})
     
     elif profile.role == 'manager':
-        requests = MaintenanceRequest.objects.all()
-        technicians = User.objects.filter(userprofile__role='technician')
-        return render(request, 'maintenance/manager_dashboard.html', {
-            'requests': requests,
-            'technicians': technicians
-        })
+      from django.db.models import Q, Count
+    
+      # Get all requests
+      all_requests = MaintenanceRequest.objects.all().order_by('-created_at')
+    
+      # Calculate counts for statistics
+      total_requests = all_requests.count()
+      pending_count = all_requests.filter(status='submitted').count()
+      assigned_count = all_requests.filter(status='assigned').count()
+      completed_count = all_requests.filter(status='completed').count()
+    
+      # Get all technicians for assignment dropdown
+      technicians = User.objects.filter(userprofile__role='technician')
+    
+      # Add pagination
+      paginator = Paginator(all_requests, 10)  # 10 per page
+      page_number = request.GET.get('page')
+      page_obj = paginator.get_page(page_number)
+    
+      return render(request, 'maintenance/manager_dashboard.html', {
+        'requests': page_obj,
+        'technicians': technicians,
+        'total_requests': total_requests,
+        'pending_count': pending_count,
+        'assigned_count': assigned_count,
+        'completed_count': completed_count,
+      })
     
     elif profile.role == 'technician':
         assignments = Assignment.objects.filter(technician=request.user)
