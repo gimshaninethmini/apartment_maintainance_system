@@ -8,6 +8,7 @@ from django.http import HttpResponseForbidden
 from django.core.paginator import Paginator
 import csv
 from django.http import HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
 
 def register_view(request):
     if request.method == 'POST':
@@ -236,3 +237,54 @@ def export_requests_csv(request):
     
     return response
 
+@login_required
+def request_detail_view(request, request_id):
+    """View for tenants to see request details"""
+    if request.user.userprofile.role != 'tenant':
+        return HttpResponseForbidden("Only tenants can view request details")
+    
+    maintenance_request = get_object_or_404(MaintenanceRequest, id=request_id, tenant=request.user)
+    return render(request, 'maintenance/request_detail.html', {'request': maintenance_request})
+
+
+@login_required
+def edit_request_view(request, request_id):
+    """View for tenants to edit pending requests"""
+    if request.user.userprofile.role != 'tenant':
+        return HttpResponseForbidden("Only tenants can edit requests")
+    
+    maintenance_request = get_object_or_404(MaintenanceRequest, id=request_id, tenant=request.user)
+    
+    if maintenance_request.status != 'submitted':
+        messages.error(request, 'Only pending requests can be edited')
+        return redirect('dashboard')
+    
+    if request.method == 'POST':
+        maintenance_request.title = request.POST['title']
+        maintenance_request.description = request.POST['description']
+        maintenance_request.priority = request.POST['priority']
+        maintenance_request.save()
+        
+        messages.success(request, 'Request updated successfully!')
+        return redirect('request_detail', request_id=maintenance_request.id)
+    
+    return render(request, 'maintenance/edit_request.html', {'request': maintenance_request})
+
+
+@login_required
+def cancel_request_view(request, request_id):
+    """View for tenants to cancel pending requests"""
+    if request.user.userprofile.role != 'tenant':
+        return HttpResponseForbidden("Only tenants can cancel requests")
+    
+    maintenance_request = get_object_or_404(MaintenanceRequest, id=request_id, tenant=request.user)
+    
+    if maintenance_request.status != 'submitted':
+        messages.error(request, 'Only pending requests can be cancelled')
+        return redirect('dashboard')
+    
+    maintenance_request.status = 'cancelled'
+    maintenance_request.save()
+    
+    messages.success(request, 'Request cancelled successfully!')
+    return redirect('dashboard')
