@@ -16,6 +16,98 @@
         </div>
     </nav>
     
+    <!-- Statistics Cards -->
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card text-white bg-primary mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Requests</h5>
+                        <h2>{{ requests|length }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-warning mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Pending</h5>
+                        <h2>{{ requests|length }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-success mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Completed</h5>
+                        <h2>{{ requests|length }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-info mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">In Progress</h5>
+                        <h2>{{ requests|length }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-3">
+    <div class="col-md-6">
+        <input type="text" id="searchInput" class="form-control" placeholder="Search requests...">
+    </div>
+    <div class="col-md-3">
+        <select id="statusFilter" class="form-control">
+            <option value="all">All Status</option>
+            <option value="submitted">Submitted</option>
+            <option value="assigned">Assigned</option>
+            <option value="in_progress">In Progress</option>
+            <option value="completed">Completed</option>
+        </select>
+    </div>
+    <div class="col-md-3">
+        <select id="priorityFilter" class="form-control">
+            <option value="all">All Priority</option>
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+            <option value="emergency">Emergency</option>
+        </select>
+    </div>
+    </div>
+
+    <script>
+    // Add JavaScript for filtering
+    document.getElementById('searchInput').addEventListener('keyup', filterRequests);
+    document.getElementById('statusFilter').addEventListener('change', filterRequests);
+    document.getElementById('priorityFilter').addEventListener('change', filterRequests);
+    
+    function filterRequests() {
+        let search = document.getElementById('searchInput').value.toLowerCase();
+        let status = document.getElementById('statusFilter').value;
+        let priority = document.getElementById('priorityFilter').value;
+        let rows = document.querySelectorAll('#requestsTable tbody tr');
+        
+        rows.forEach(row => {
+            let title = row.cells[1].textContent.toLowerCase();
+            let rowStatus = row.cells[4].textContent.toLowerCase();
+            let rowPriority = row.cells[3].textContent.toLowerCase();
+            
+            let matchesSearch = title.includes(search);
+            let matchesStatus = status === 'all' || rowStatus.includes(status);
+            let matchesPriority = priority === 'all' || rowPriority.includes(priority);
+            
+            if (matchesSearch && matchesStatus && matchesPriority) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+   </script>
+    
+    <!-- Requests Table -->
     <div class="container mt-4">
         <div class="row">
             <div class="col-12">
@@ -73,5 +165,49 @@
             </div>
         </div>
     </div>
+    <!-- PAGINATION CONTROLS -->
+    {% if requests.has_other_pages %}
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col-12">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        {% if requests.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ requests.previous_page_number }}">Previous</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#">Previous</a>
+                            </li>
+                        {% endif %}
+                        
+                        {% for num in requests.paginator.page_range %}
+                            {% if requests.number == num %}
+                                <li class="page-item active">
+                                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                </li>
+                            {% else %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if requests.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ requests.next_page_number }}">Next</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#">Next</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 </body>
 </html>

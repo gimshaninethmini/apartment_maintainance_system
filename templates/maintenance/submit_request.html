@@ -20,7 +20,7 @@
                         <h4>New Maintenance Request</h4>
                     </div>
                     <div class="card-body">
-                        <form method="post">
+                        <form method="post" enctype="multipart/form-data">
                             {% csrf_token %}
                             <div class="mb-3">
                                 <label>Issue Title</label>
@@ -38,6 +38,12 @@
                                     <option value="high">High</option>
                                     <option value="emergency">Emergency</option>
                                 </select>
+                            </div>
+                            <!--Add image upload field-->
+                            <div class="mb-3">
+                               <label>Image (Optional)</label>
+                               <input type="file" name="image" class="form-control" accept="image/*">
+                               <small class="text-muted">Upload a photo of the issue</small>
                             </div>
                             <button type="submit" class="btn btn-primary">Submit Request</button>
                         </form>
