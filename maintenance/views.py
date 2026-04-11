@@ -59,10 +59,24 @@ def dashboard_view(request):
     
     if profile.role == 'tenant':
         requests = MaintenanceRequest.objects.filter(tenant=request.user).order_by('-created_at')
+    
+        # Count only THIS tenant's requests
+        total_count = requests.count()
+        pending_count = requests.filter(status='submitted').count()
+        in_progress_count = requests.filter(status='in_progress').count()
+        completed_count = requests.filter(status='completed').count()
+        
         paginator = Paginator(requests, 5)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
-        return render(request, 'maintenance/tenant_dashboard.html', {'requests': page_obj})
+    
+        return render(request, 'maintenance/tenant_dashboard.html', {
+            'requests': page_obj,
+            'total_count': total_count,
+            'pending_count': pending_count,
+            'in_progress_count': in_progress_count,
+            'completed_count': completed_count,
+            })
     
     elif profile.role == 'manager':
         all_requests = MaintenanceRequest.objects.all().order_by('-created_at')
