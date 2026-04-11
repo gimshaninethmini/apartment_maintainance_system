@@ -1,0 +1,21 @@
+{% load static %} {% block extra_css %}{% endblock %} {% if user.is_authenticated %}
+AptFix
+{{ user.username|first|upper }}
+{{ user.username }}
+{% if user.userprofile.role == 'manager' %} Manager {% elif user.userprofile.role == 'technician' %} Technician {% else %} Tenant {% endif %}
+{% if user.userprofile.role == 'tenant' %}
+Dashboard
+New Request
+{% elif user.userprofile.role == 'manager' %}
+Dashboard
+Export CSV
+{% elif user.userprofile.role == 'technician' %}
+My Tasks
+{% endif %}
+Logout
+
+{% block page_title %}Dashboard{% endblock %}
+{% if user.userprofile.role == 'tenant' %}  {% endif %}
+{% if messages %} {% for message in messages %} {% endfor %}{% endif %}
+{% block content %}{% endblock %}
+{% else %} {% block content %}{% endblock %} {% endif %} {% block extra_js %}{% endblock %}
