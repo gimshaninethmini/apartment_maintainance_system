@@ -147,7 +147,7 @@ def request_detail_view(request, request_id):
         return HttpResponseForbidden("Only tenants can view request details")
     
     maintenance_request = get_object_or_404(MaintenanceRequest, id=request_id, tenant=request.user)
-    return render(request, 'maintenance/request_detail.html', {'request': maintenance_request})
+    return render(request, 'maintenance/request_detail.html', {'maintenance_request': maintenance_request})
 
 @login_required
 def edit_request_view(request, request_id):
@@ -169,7 +169,7 @@ def edit_request_view(request, request_id):
         messages.success(request, 'Request updated successfully!')
         return redirect('request_detail', request_id=maintenance_request.id)
     
-    return render(request, 'maintenance/edit_request.html', {'request': maintenance_request})
+    return render(request, 'maintenance/edit_request.html', {'maintenance_request': maintenance_request})
 
 @login_required
 def cancel_request_view(request, request_id):
