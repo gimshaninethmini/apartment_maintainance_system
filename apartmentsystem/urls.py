@@ -28,5 +28,9 @@ urlpatterns = [
     path('export/requests/', views.export_requests_csv, name='export_requests'),
     
     # Technician URLs
+    # Technician URLs
     path('update/<int:request_id>/', views.update_status_view, name='update_status'),
+    
+    # Profile URL
+    path('profile/', views.profile_view, name='profile'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
