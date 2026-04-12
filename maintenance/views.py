@@ -7,6 +7,7 @@ from .models import UserProfile, MaintenanceRequest, Assignment, UpdateLog
 from django.http import HttpResponseForbidden, HttpResponse
 from django.db.models import Count, Q
 from django.core.paginator import Paginator
+from django.http import JsonResponse
 import csv
 
 # ========== AUTHENTICATION VIEWS ==========

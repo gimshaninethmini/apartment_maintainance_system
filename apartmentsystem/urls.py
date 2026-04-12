@@ -22,10 +22,11 @@ urlpatterns = [
     path('request/<int:request_id>/cancel/', views.cancel_request_view, name='cancel_request'),
     
     # Manager URLs
-    path('assign/<int:request_id>/', views.assign_technician_view, name='assign_technician'),
+    path('manager/assign/<int:request_id>/', views.assign_technician_view, name='assign_technician'),
     path('manager/request/<int:request_id>/', views.manager_request_detail_view, name='manager_request_detail'),
-    path('manager/update/<int:request_id>/', views.manager_update_status_view, name='manager_update_status'),
-    path('export/requests/', views.export_requests_csv, name='export_requests'),
+    path('manager/status/<int:request_id>/', views.manager_update_status_view, name='manager_update_status'),
+    path('manager/export/', views.export_requests_csv, name='export_requests_csv'),
+    path('manager/chart-data/', views.chart_data_view, name='chart_data'),
     
     # Technician URLs
     path('update/<int:request_id>/', views.update_status_view, name='update_status'),
