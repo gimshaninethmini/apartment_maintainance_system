@@ -303,3 +303,26 @@ def update_status_view(request, request_id):
         return redirect('dashboard')
     
     return render(request, 'maintenance/update_status.html', {'assignment': assignment})
+
+
+@login_required
+def profile_view(request):
+    profile = request.user.userprofile
+    
+    if request.method == 'POST':
+        # Update user info
+        request.user.first_name = request.POST.get('first_name', '')
+        request.user.last_name = request.POST.get('last_name', '')
+        request.user.email = request.POST.get('email', '')
+        request.user.save()
+        
+        # Update profile info
+        profile.phone = request.POST.get('phone', '')
+        if profile.role == 'tenant':
+            profile.apartment_number = request.POST.get('apartment_number', '')
+        profile.save()
+        
+        messages.success(request, 'Profile updated successfully!')
+        return redirect('profile')
+    
+    return render(request, 'maintenance/profile.html', {'profile': profile})
