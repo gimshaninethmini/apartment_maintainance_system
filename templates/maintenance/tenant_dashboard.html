@@ -119,7 +119,7 @@
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-hover" id="requestsTable">
+                            <table class="table table-hover" id="requestsTable" style="cursor: pointer;">
                                 <thead>
                                     <tr>
                                         <th>Title</th>
@@ -130,7 +130,7 @@
                                 </thead>
                                 <tbody>
                                     {% for request in requests %}
-                                    <tr>
+                                    <tr onclick="window.location='{% url 'request_detail' request_id=request.id %}'">
                                         <td>{{ request.title }}</td>
                                         <td>
                                             {% if request.priority == 'high' %}
