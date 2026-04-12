@@ -7,105 +7,130 @@
 </head>
 <body>
     <nav class="navbar navbar-dark bg-primary">
-        <div class="container">
-            <span class="navbar-brand">🏢 Tenant Dashboard</span>
-            <div>
-                <a href="{% url 'submit_request' %}" class="btn btn-light me-2">New Request</a>
-                <a href="{% url 'logout' %}" class="btn btn-outline-light">Logout</a>
+       <div class="container">
+        <span class="navbar-brand">🏢 Tenant Dashboard</span>
+        <div class="d-flex align-items-center">
+            <a href="{% url 'submit_request' %}" class="btn btn-light me-2">New Request</a>
+            <!-- Profile Dropdown -->
+            <div class="dropdown me-2">
+                <button class="btn btn-outline-light dropdown-toggle" type="button" 
+                        data-bs-toggle="dropdown">
+                    👤 {{ request.user.username }}
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                        <span class="dropdown-item-text">
+                            <small class="text-muted">Role: {{ request.user.userprofile.role|title }}</small>
+                        </span>
+                    </li>
+                    {% if request.user.userprofile.apartment_number %}
+                    <li>
+                        <span class="dropdown-item-text">
+                            <small class="text-muted">Apt: {{ request.user.userprofile.apartment_number }}</small>
+                        </span>
+                    </li>
+                    {% endif %}
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{% url 'profile' %}">Edit Profile</a></li>
+                    <li><a class="dropdown-item text-danger" href="{% url 'logout' %}">Logout</a></li>
+                </ul>
             </div>
-        </div>
+       </div>
+       </div>
     </nav>
     
     <!-- Statistics Cards -->
     <div class="container mt-4">
-        <div class="row">
-            <div class="col-md-3">
-                <div class="card text-white bg-primary mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title">Total Requests</h5>
-                        <h2>{{ requests|length }}</h2>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-white bg-warning mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title">Pending</h5>
-                        <h2>{{ requests|length }}</h2>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-white bg-success mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title">Completed</h5>
-                        <h2>{{ requests|length }}</h2>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-white bg-info mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title">In Progress</h5>
-                        <h2>{{ requests|length }}</h2>
-                    </div>
+      <div class="row">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Total Requests</h5>
+                    <h2>{{ total_count }}</h2>
                 </div>
             </div>
         </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Pending</h5>
+                    <h2>{{ pending_count }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Completed</h5>
+                    <h2>{{ completed_count }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-info mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">In Progress</h5>
+                    <h2>{{ in_progress_count }}</h2>
+                </div>
+            </div>
+        </div>
+      </div>
     </div>
-    <div class="row mb-3">
-    <div class="col-md-6">
-        <input type="text" id="searchInput" class="form-control" placeholder="Search requests...">
-    </div>
-    <div class="col-md-3">
-        <select id="statusFilter" class="form-control">
-            <option value="all">All Status</option>
-            <option value="submitted">Submitted</option>
-            <option value="assigned">Assigned</option>
-            <option value="in_progress">In Progress</option>
-            <option value="completed">Completed</option>
-        </select>
-    </div>
-    <div class="col-md-3">
-        <select id="priorityFilter" class="form-control">
-            <option value="all">All Priority</option>
-            <option value="low">Low</option>
-            <option value="medium">Medium</option>
-            <option value="high">High</option>
-            <option value="emergency">Emergency</option>
-        </select>
-    </div>
-    </div>
+    <div class="container mt-3">
+      <div class="row mb-3">
+        <div class="col-md-6">
+            <input type="text" id="searchInput" class="form-control" placeholder="Search requests...">
+        </div>
+        <div class="col-md-3">
+            <select id="statusFilter" class="form-control">
+                <option value="all">All Status</option>
+                <option value="submitted">Submitted</option>
+                <option value="assigned">Assigned</option>
+                <option value="in_progress">In Progress</option>
+                <option value="completed">Completed</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select id="priorityFilter" class="form-control">
+                <option value="all">All Priority</option>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+                <option value="emergency">Emergency</option>
+            </select>
+        </div>
+     </div>
+   </div>
 
     <script>
-    // Add JavaScript for filtering
     document.getElementById('searchInput').addEventListener('keyup', filterRequests);
     document.getElementById('statusFilter').addEventListener('change', filterRequests);
     document.getElementById('priorityFilter').addEventListener('change', filterRequests);
-    
+
     function filterRequests() {
         let search = document.getElementById('searchInput').value.toLowerCase();
         let status = document.getElementById('statusFilter').value;
         let priority = document.getElementById('priorityFilter').value;
         let rows = document.querySelectorAll('#requestsTable tbody tr');
-        
+    
         rows.forEach(row => {
-            let title = row.cells[1].textContent.toLowerCase();
-            let rowStatus = row.cells[4].textContent.toLowerCase();
-            let rowPriority = row.cells[3].textContent.toLowerCase();
-            
-            let matchesSearch = title.includes(search);
-            let matchesStatus = status === 'all' || rowStatus.includes(status);
-            let matchesPriority = priority === 'all' || rowPriority.includes(priority);
-            
-            if (matchesSearch && matchesStatus && matchesPriority) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
+           // columns: 0=Title, 1=Priority, 2=Status, 3=Submitted
+           let title = row.cells[0].textContent.toLowerCase();
+           let rowPriority = row.cells[1].textContent.toLowerCase();
+           let rowStatus = row.cells[2].textContent.toLowerCase();
+        
+           let matchesSearch = title.includes(search);
+           let matchesStatus = status === 'all' || rowStatus.includes(status);
+           let matchesPriority = priority === 'all' || rowPriority.includes(priority);
+        
+           if (matchesSearch && matchesStatus && matchesPriority) {
+            row.style.display = '';
+           } else {
+            row.style.display = 'none';
+           }
         });
-    }
-   </script>
+     }
+     </script>
     
     <!-- Requests Table -->
     <div class="container mt-4">
@@ -117,7 +142,7 @@
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-hover">
+                            <table class="table table-hover" id="requestsTable" style="cursor: pointer;">
                                 <thead>
                                     <tr>
                                         <th>Title</th>
@@ -128,7 +153,7 @@
                                 </thead>
                                 <tbody>
                                     {% for request in requests %}
-                                    <tr>
+                                    <tr onclick="window.location='{% url 'request_detail' request_id=request.id %}'">
                                         <td>{{ request.title }}</td>
                                         <td>
                                             {% if request.priority == 'high' %}
@@ -209,5 +234,6 @@
         </div>
     </div>
     {% endif %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

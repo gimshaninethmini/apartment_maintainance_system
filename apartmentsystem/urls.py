@@ -29,5 +29,9 @@ urlpatterns = [
     path('manager/chart-data/', views.chart_data_view, name='chart_data'),
     
     # Technician URLs
+    # Technician URLs
     path('update/<int:request_id>/', views.update_status_view, name='update_status'),
+    
+    # Profile URL
+    path('profile/', views.profile_view, name='profile'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

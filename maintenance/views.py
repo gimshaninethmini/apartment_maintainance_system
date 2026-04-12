@@ -92,10 +92,24 @@ def dashboard_view(request):
     
     if profile.role == 'tenant':
         requests = MaintenanceRequest.objects.filter(tenant=request.user).order_by('-created_at')
+    
+        # Count only THIS tenant's requests
+        total_count = requests.count()
+        pending_count = requests.filter(status='submitted').count()
+        in_progress_count = requests.filter(status='in_progress').count()
+        completed_count = requests.filter(status='completed').count()
+        
         paginator = Paginator(requests, 5)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
-        return render(request, 'maintenance/tenant_dashboard.html', {'requests': page_obj})
+    
+        return render(request, 'maintenance/tenant_dashboard.html', {
+            'requests': page_obj,
+            'total_count': total_count,
+            'pending_count': pending_count,
+            'in_progress_count': in_progress_count,
+            'completed_count': completed_count,
+            })
     
     elif profile.role == 'manager':
    
@@ -203,7 +217,7 @@ def request_detail_view(request, request_id):
         return HttpResponseForbidden("Only tenants can view request details")
     
     maintenance_request = get_object_or_404(MaintenanceRequest, id=request_id, tenant=request.user)
-    return render(request, 'maintenance/request_detail.html', {'request': maintenance_request})
+    return render(request, 'maintenance/request_detail.html', {'maintenance_request': maintenance_request})
 
 @login_required
 def edit_request_view(request, request_id):
@@ -225,7 +239,7 @@ def edit_request_view(request, request_id):
         messages.success(request, 'Request updated successfully!')
         return redirect('request_detail', request_id=maintenance_request.id)
     
-    return render(request, 'maintenance/edit_request.html', {'request': maintenance_request})
+    return render(request, 'maintenance/edit_request.html', {'maintenance_request': maintenance_request})
 
 @login_required
 def cancel_request_view(request, request_id):
@@ -360,6 +374,7 @@ def update_status_view(request, request_id):
     
     return render(request, 'maintenance/update_status.html', {'assignment': assignment})
 
+<<<<<<< HEAD
 #  ========== NEW MANAGER VIEWS ==========
 
 @login_required
@@ -548,3 +563,27 @@ def export_requests_csv(request):
         ])
 
     return response
+=======
+
+@login_required
+def profile_view(request):
+    profile = request.user.userprofile
+    
+    if request.method == 'POST':
+        # Update user info
+        request.user.first_name = request.POST.get('first_name', '')
+        request.user.last_name = request.POST.get('last_name', '')
+        request.user.email = request.POST.get('email', '')
+        request.user.save()
+        
+        # Update profile info
+        profile.phone = request.POST.get('phone', '')
+        if profile.role == 'tenant':
+            profile.apartment_number = request.POST.get('apartment_number', '')
+        profile.save()
+        
+        messages.success(request, 'Profile updated successfully!')
+        return redirect('profile')
+    
+    return render(request, 'maintenance/profile.html', {'profile': profile})
+>>>>>>> ec5e0fe3ab439bca2e3d71d51cec5f8c013456ba
