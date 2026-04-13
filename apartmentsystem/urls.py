@@ -29,4 +29,5 @@ urlpatterns = [
     
     # Technician URLs
     path('update/<int:request_id>/', views.update_status_view, name='update_status'),
+    path('request/<int:request_id>/history/', views.request_history_view, name='request_history'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

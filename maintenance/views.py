@@ -91,7 +91,20 @@ def dashboard_view(request):
     
     elif profile.role == 'technician':
         assignments = Assignment.objects.filter(technician=request.user)
-        return render(request, 'maintenance/technician_dashboard.html', {'assignments': assignments})
+        
+        # COUNT TASKS BY STATUS
+        pending_count = assignments.filter(request__status__in=['submitted', 'assigned']).count()
+        reviewed_count = assignments.filter(request__status='reviewed').count()
+        in_progress_count = assignments.filter(request__status='in_progress').count()
+        completed_count = assignments.filter(request__status='completed').count()
+        
+        return render(request, 'maintenance/technician_dashboard.html', {
+            'assignments': assignments,
+            'pending_count': pending_count,
+            'reviewed_count': reviewed_count,
+            'in_progress_count': in_progress_count,
+            'completed_count': completed_count,
+        })
     
     return HttpResponseForbidden("Invalid role")
 
@@ -278,6 +291,10 @@ def update_status_view(request, request_id):
         assignment.request.status = new_status
         assignment.request.save()
         
+        # Save notes to assignment
+        assignment.notes = notes
+        assignment.save()
+        
         UpdateLog.objects.create(
             request=assignment.request,
             updated_by=request.user,
@@ -289,3 +306,17 @@ def update_status_view(request, request_id):
         return redirect('dashboard')
     
     return render(request, 'maintenance/update_status.html', {'assignment': assignment})
+
+@login_required
+def request_history_view(request, request_id):
+    """View update history/logs for a maintenance request"""
+    if request.user.userprofile.role != 'technician':
+        return HttpResponseForbidden("Only technicians can view logs")
+    
+    assignment = get_object_or_404(Assignment, request_id=request_id, technician=request.user)
+    logs = UpdateLog.objects.filter(request=assignment.request).order_by('-created_at')
+    
+    return render(request, 'maintenance/request_history.html', {
+        'assignment': assignment,
+        'logs': logs
+    })
