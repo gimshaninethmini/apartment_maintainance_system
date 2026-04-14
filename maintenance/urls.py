@@ -1,13 +1,12 @@
 from django.urls import path
 from . import views
 
-urlpatterns =[
+urlpatterns = [
     # Auth
     path('', views.login_view, name='login'),
     path('login/', views.login_view, name='login'),
     path('register/', views.register_view, name='register'),
     path('logout/', views.logout_view, name='logout'),
-
 
     # Dashboard
     path('dashboard/', views.dashboard_view, name='dashboard'),
@@ -17,17 +16,9 @@ urlpatterns =[
     path('request/<int:request_id>/', views.request_detail_view, name='request_detail'),
     path('request/<int:request_id>/edit/', views.edit_request_view, name='edit_request'),
     path('request/<int:request_id>/cancel/', views.cancel_request_view, name='cancel_request'),
-    
+    path('profile/', views.profile_view, name='profile'),
 
-    
-    # NEW URL for request detail
-    path('request/<int:request_id>/', views.request_detail_view, name='request_detail'),
-    path('request/<int:request_id>/edit/', views.edit_request_view, name='edit_request'),
-    path('request/<int:request_id>/cancel/', views.cancel_request_view, name='cancel_request'),
-    path('profile/', views.profile_view, name='profile')
-
-
- # Technician
+    # Technician
     path('update/<int:request_id>/', views.update_status_view, name='update_status'),
 
     # Manager
@@ -36,4 +27,4 @@ urlpatterns =[
     path('manager/status/<int:request_id>/', views.manager_update_status_view, name='manager_update_status'),
     path('manager/export/', views.export_requests_csv, name='export_requests_csv'),
     path('manager/chart-data/', views.chart_data_view, name='chart_data'),
- ]
+]
