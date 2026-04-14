@@ -13,109 +13,22 @@
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 40px 0;
         }
         
         /* White card in the middle */
         .form-card {
             background: white;
-            border-radius: 12px;
-            box-shadow: 0 15px 50px rgba(0,0,0,0.15);
-            overflow: hidden;
-        }
-
-        .card-header {
-            padding: 25px !important;
-            border-bottom: none !important;
-        }
-
-        .card-header h4 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            letter-spacing: 0.5px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
         }
         
         /* Info section styling */
         .info-section {
             background: #f8f9fa;
-            padding: 25px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            border-left: 5px solid #0d6efd;
-        }
-
-        .info-section h6 {
-            font-size: 0.85rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-        }
-
-        .info-section small {
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .info-section strong {
-            font-size: 0.95rem;
-            color: #212529;
-        }
-
-        .form-label {
-            font-size: 0.95rem;
-            margin-bottom: 8px;
-        }
-
-        .form-control, .form-select {
-            border: 1px solid #dee2e6;
-            border-radius: 6px;
-            padding: 10px 12px;
-            font-size: 0.95rem;
-        }
-
-        .form-control:focus, .form-select:focus {
-            border-color: #0d6efd;
-            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
-        }
-
-        .btn {
-            border-radius: 6px;
-            padding: 8px 16px;
-            font-weight: 500;
-            font-size: 0.95rem;
-            border: none;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary {
-            background-color: #0d6efd;
-        }
-
-        .btn-primary:hover {
-            background-color: #0c63e4;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
-        }
-
-        .btn-outline-secondary {
-            color: #6c757d;
-            border: 2px solid #dee2e6;
-        }
-
-        .btn-outline-secondary:hover {
-            background-color: #f8f9fa;
-            border-color: #adb5bd;
-            transform: translateY(-2px);
-        }
-
-        .card-body {
-            padding: 30px !important;
-        }
-
-        .badge {
-            padding: 6px 10px;
-            border-radius: 5px;
-            font-weight: 500;
-            font-size: 0.85rem;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #0d6efd;
         }
     </style>
 </head>
@@ -144,56 +57,52 @@
                         <!-- ===== REQUEST INFORMATION SECTION ===== -->
                         <!-- Shows details about the request being worked on -->
                         <div class="info-section">
-                            <h6 class="mb-3 text-uppercase text-muted"><i class="fas fa-file-alt me-2"></i>Request Information</h6>
-                            <div class="row g-3">
+                            <h5 class="mb-3"><i class="fas fa-file-alt"></i> Request Information</h5>
+                            <div class="row mb-2">
                                 <div class="col-md-6">
-                                    <small class="text-muted d-block mb-1">Request ID</small>
-                                    <strong>#{{ assignment.request.id }}</strong>
+                                    <strong>Request ID:</strong> #{{ assignment.request.id }}
                                 </div>
                                 <div class="col-md-6">
-                                    <small class="text-muted d-block mb-1">Title</small>
-                                    <strong>{{ assignment.request.title }}</strong>
+                                    <strong>Title:</strong> {{ assignment.request.title }}
                                 </div>
                             </div>
-                            <div class="row g-3 mt-0">
+                            <div class="row mb-2">
                                 <div class="col-md-6">
-                                    <small class="text-muted d-block mb-1">Tenant</small>
-                                    <strong>{{ assignment.request.tenant.username }}</strong>
+                                    <strong>Tenant:</strong> {{ assignment.request.tenant.username }}
                                 </div>
                                 <div class="col-md-6">
-                                    <small class="text-muted d-block mb-1">Apartment</small>
-                                    <strong>{{ assignment.request.tenant.userprofile.apartment_number }}</strong>
+                                    <strong>Apartment:</strong> {{ assignment.request.tenant.userprofile.apartment_number }}
                                 </div>
                             </div>
-                            <div class="row g-3 mt-0">
+                            <div class="row mb-2">
                                 <div class="col-md-6">
-                                    <small class="text-muted d-block mb-1">Priority</small>
+                                    <strong>Priority:</strong>
                                     {% if assignment.request.priority == 'emergency' %}
-                                        <span class="badge bg-danger"><i class="fas fa-exclamation-circle me-1"></i>Emergency</span>
+                                        <span class="badge bg-danger">🚨 Emergency</span>
                                     {% elif assignment.request.priority == 'high' %}
-                                        <span class="badge bg-danger"><i class="fas fa-arrow-up me-1"></i>High</span>
+                                        <span class="badge bg-danger">High</span>
                                     {% elif assignment.request.priority == 'medium' %}
-                                        <span class="badge bg-warning text-dark"><i class="fas fa-minus me-1"></i>Medium</span>
+                                        <span class="badge bg-warning text-dark">Medium</span>
                                     {% else %}
-                                        <span class="badge bg-info"><i class="fas fa-arrow-down me-1"></i>Low</span>
+                                        <span class="badge bg-info">Low</span>
                                     {% endif %}
                                 </div>
                                 <div class="col-md-6">
-                                    <small class="text-muted d-block mb-1">Current Status</small>
+                                    <strong>Current Status:</strong>
                                     {% if assignment.request.status == 'completed' %}
-                                        <span class="badge bg-success"><i class="fas fa-check me-1"></i>Completed</span>
+                                        <span class="badge bg-success">✓ Completed</span>
                                     {% elif assignment.request.status == 'in_progress' %}
-                                        <span class="badge bg-primary"><i class="fas fa-spinner me-1"></i>In Progress</span>
-                                    {% elif assignment.request.status == 'reviewed' %}
-                                        <span class="badge bg-info"><i class="fas fa-eye me-1"></i>Reviewed</span>
+                                        <span class="badge bg-primary">↻ In Progress</span>
+                                    {% elif assignment.request.status == 'assigned' %}
+                                        <span class="badge bg-warning text-dark">Assigned</span>
                                     {% else %}
-                                        <span class="badge bg-warning text-dark"><i class="fas fa-circle-notch me-1"></i>Pending</span>
+                                        <span class="badge bg-secondary">{{ assignment.request.status }}</span>
                                     {% endif %}
                                 </div>
                             </div>
-                            <div class="mt-4">
-                                <small class="text-muted d-block mb-2">Description</small>
-                                <p class="border-start border-secondary ps-3 mb-0">
+                            <div class="mt-3">
+                                <strong>Description:</strong>
+                                <p style="background: white; padding: 10px; border: 1px solid #ddd; border-radius: 5px; margin-top: 5px;">
                                     {{ assignment.request.description }}
                                 </p>
                             </div>
@@ -206,35 +115,35 @@
                             
                             <!-- Status selection dropdown -->
                             <div class="mb-4">
-                                <label class="form-label fw-bold text-dark">
-                                    <i class="fas fa-sync-alt me-2 text-info"></i>Update Status
+                                <label class="form-label fw-bold">
+                                    <i class="fas fa-sync-alt"></i> New Status
                                 </label>
-                                <select name="status" class="form-select" required>
+                                <select name="status" class="form-select form-select-lg" required>
                                     <option value="">-- Select new status --</option>
-                                    <option value="reviewed">Review</option>
-                                    <option value="in_progress">In Progress</option>
-                                    <option value="completed">Completed</option>
+                                    <option value="reviewed">📋 Review (Mark as Reviewed)</option>
+                                    <option value="in_progress">🔧 Start Work (In Progress)</option>
+                                    <option value="completed">✅ Mark as Completed</option>
                                 </select>
-                                <small class="text-muted d-block mt-2">Select the appropriate status for this maintenance request</small>
+                                <small class="text-muted">Choose what stage the work is at</small>
                             </div>
 
                             <!-- Notes textarea -->
                             <div class="mb-4">
-                                <label class="form-label fw-bold text-dark">
-                                    <i class="fas fa-pen-square me-2 text-info"></i>Work Notes
+                                <label class="form-label fw-bold">
+                                    <i class="fas fa-pen"></i> Work Notes / Updates
                                 </label>
-                                <textarea name="notes" rows="6" class="form-control" placeholder="Describe your findings, work completed, or any issues encountered...">{% if assignment.notes %}{{ assignment.notes }}{% endif %}</textarea>
-                                <small class="text-muted d-block mt-2">Provide details about your progress or findings</small>
+                                <textarea name="notes" rows="5" class="form-control" placeholder="Describe the work you've done or current progress...">{{ assignment.notes }}</textarea>
+                                <small class="text-muted">Tell us what you've fixed or what the current situation is</small>
                             </div>
 
                             <!-- ===== BUTTONS ===== -->
                             <!-- Cancel button and Submit button side by side -->
-                            <div class="d-flex gap-2 justify-content-end mt-5">
-                                <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary px-4">
-                                    <i class="fas fa-times me-2"></i>Cancel
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <a href="{% url 'dashboard' %}" class="btn btn-secondary btn-lg">
+                                    <i class="fas fa-times"></i> Cancel
                                 </a>
-                                <button type="submit" class="btn btn-primary px-4">
-                                    <i class="fas fa-check me-2"></i>Update Status
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-check"></i> Update Status
                                 </button>
                             </div>
                         </form>
@@ -246,30 +155,5 @@
 
     <!-- Bootstrap JavaScript - Makes form work -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.querySelector('form');
-            const statusSelect = document.querySelector('select[name="status"]');
-            
-            if (form && statusSelect) {
-                form.addEventListener('submit', function(event) {
-                    if (!statusSelect.value) {
-                        event.preventDefault();
-                        alert('Please select a status before updating.');
-                        return false;
-                    }
-                    
-                    const statusText = statusSelect.options[statusSelect.selectedIndex].text;
-                    const confirmed = confirm(`Are you sure you want to change the status to "${statusText}"?`);
-                    
-                    if (!confirmed) {
-                        event.preventDefault();
-                        return false;
-                    }
-                });
-            }
-        });
-    </script>
 </body>
 </html>

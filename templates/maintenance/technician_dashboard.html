@@ -38,10 +38,6 @@
             border-left-color: #ffc107;
         }
         
-        .stats-card.reviewed {
-            border-left-color: #17a2b8;
-        }
-        
         .stats-card.in-progress {
             border-left-color: #0d6efd;
         }
@@ -76,31 +72,24 @@
     <div class="container-fluid mt-4 ps-4 pe-4">
         
         <!-- ===== STATISTICS SECTION ===== -->
-        <!-- These cards show how many tasks in each status -->
+        <!-- These 3 cards show how many tasks in each status -->
         <div class="row mb-4">
             <!-- Card 1: Pending Tasks -->
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div class="stats-card pending p-3 shadow-sm">
                     <h6 class="text-muted"><i class="fas fa-circle-notch"></i> Pending</h6>
                     <h3>{{ pending_count }}</h3>
                 </div>
             </div>
-            <!-- Card 2: Reviewed Tasks -->
-            <div class="col-md-3">
-                <div class="stats-card reviewed p-3 shadow-sm">
-                    <h6 class="text-muted"><i class="fas fa-eye"></i> Reviewed</h6>
-                    <h3>{{ reviewed_count }}</h3>
-                </div>
-            </div>
-            <!-- Card 3: In Progress Tasks -->
-            <div class="col-md-3">
+            <!-- Card 2: In Progress Tasks -->
+            <div class="col-md-4">
                 <div class="stats-card in-progress p-3 shadow-sm">
                     <h6 class="text-muted"><i class="fas fa-spinner"></i> In Progress</h6>
                     <h3>{{ in_progress_count }}</h3>
                 </div>
             </div>
-            <!-- Card 4: Completed Tasks -->
-            <div class="col-md-3">
+            <!-- Card 3: Completed Tasks -->
+            <div class="col-md-4">
                 <div class="stats-card completed p-3 shadow-sm">
                     <h6 class="text-muted"><i class="fas fa-check-circle"></i> Completed</h6>
                     <h3>{{ completed_count }}</h3>
@@ -170,8 +159,6 @@
                                         <span class="badge bg-success"><i class="fas fa-check"></i> Completed</span>
                                     {% elif assignment.request.status == 'in_progress' %}
                                         <span class="badge bg-primary"><i class="fas fa-spinner"></i> In Progress</span>
-                                    {% elif assignment.request.status == 'reviewed' %}
-                                        <span class="badge bg-info"><i class="fas fa-eye"></i> Reviewed</span>
                                     {% else %}
                                         <span class="badge bg-warning text-dark"><i class="fas fa-circle-notch"></i> Pending</span>
                                     {% endif %}
@@ -186,10 +173,6 @@
                                     <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#detailsModal{{ assignment.request.id }}" title="View Details">
                                         <i class="fas fa-eye"></i>
                                     </button>
-                                    <!-- Button to view history -->
-                                    <a href="{% url 'request_history' assignment.request.id %}" class="btn btn-sm btn-secondary" title="View History">
-                                        <i class="fas fa-history"></i>
-                                    </a>
                                     <!-- Button to update status -->
                                     <a href="{% url 'update_status' assignment.request.id %}" class="btn btn-sm btn-primary" title="Update">
                                         <i class="fas fa-edit"></i>
