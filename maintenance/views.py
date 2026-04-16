@@ -98,6 +98,7 @@ def dashboard_view(request):
     
        total_count = requests.count()
        pending_count = requests.filter(status='submitted').count()
+       assigned_count = requests.filter(status='assigned').count()
        in_progress_count = requests.filter(status='in_progress').count()
        completed_count = requests.filter(status='completed').count()
     
@@ -109,6 +110,7 @@ def dashboard_view(request):
           'requests': page_obj,
           'total_count': total_count,
           'pending_count': pending_count,
+          'assigned_count': assigned_count,
           'in_progress_count': in_progress_count,
           'completed_count': completed_count,
           'profile': profile,
