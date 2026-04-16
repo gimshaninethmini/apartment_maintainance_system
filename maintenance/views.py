@@ -41,11 +41,18 @@ def login_view(request):
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(request, username=username, password=password)
-        if user:
+        if user is not None:
             login(request, user)
             return redirect('dashboard')
         else:
-            messages.error(request, 'Invalid credentials')
+            # Check if username exists
+            if User.objects.filter(username=username).exists():
+                messages.error(request, '❌ Incorrect Username or password. Please try again.')
+            else:
+                messages.error(request, '❌ Incorrect Username or password. Please try again.')
+            return redirect('login')
+    
+    # GET request - just show empty login form, no messages
     return render(request, 'registration/login.html')
 
 def logout_view(request):
