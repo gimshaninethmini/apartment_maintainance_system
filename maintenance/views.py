@@ -98,7 +98,7 @@ def dashboard_view(request):
     
        total_count = requests.count()
        pending_count = requests.filter(status='submitted').count()
-       assigned_count = requests.filter(status='assigned').count()
+       assigned_count = requests.filter(status='pending').count()
        in_progress_count = requests.filter(status='in_progress').count()
        completed_count = requests.filter(status='completed').count()
     
@@ -143,7 +143,7 @@ def dashboard_view(request):
         total_count    = all_qs.count()
         pending_count  = all_qs.filter(status='submitted').count()
         reviewed_count = all_qs.filter(status='reviewed').count()
-        assigned_count = all_qs.filter(status='assigned').count()
+        assigned_count = all_qs.filter(status='pending').count()
         in_progress_count = all_qs.filter(status='in_progress').count()
         completed_count   = all_qs.filter(status='completed').count()
         cancelled_count   = all_qs.filter(status='cancelled').count()
@@ -154,7 +154,7 @@ def dashboard_view(request):
         ).annotate(
             active_tasks=Count(
                 'assignment',
-                filter=Q(assignment__request__status__in=['assigned', 'in_progress'])
+                filter=Q(assignment__request__status__in=['pending', 'in_progress'])
             )
         )
     
@@ -180,9 +180,9 @@ def dashboard_view(request):
     elif profile.role == 'technician':
         assignments = Assignment.objects.filter(technician=request.user)
         
-        # Calculate status counts - assigned = pending (from technician view)
+        # Calculate status counts
         total_count = assignments.count()
-        pending_count = assignments.filter(request__status='assigned').count()
+        pending_count = assignments.filter(request__status='pending').count()
         reviewed_count = assignments.filter(request__status='reviewed').count()
         in_progress_count = assignments.filter(request__status='in_progress').count()
         completed_count = assignments.filter(request__status='completed').count()
@@ -289,12 +289,26 @@ def update_status_view(request, request_id):
         return HttpResponseForbidden("Only technicians can update status")
     
     assignment = get_object_or_404(Assignment, request_id=request_id, technician=request.user)
+    current_status = assignment.request.status
     
     if request.method == 'POST':
         new_status = request.POST['status']
         notes      = request.POST.get('notes', '')
         
+        # Validate status transition
+        valid_transitions = {
+            'pending': ['in_progress'],
+            'in_progress': ['completed'],
+        }
+        
+        if current_status not in valid_transitions or new_status not in valid_transitions[current_status]:
+            messages.error(request, f'Cannot change from {current_status} to {new_status}')
+            return redirect('update_status', request_id=request_id)
+        
         assignment.request.status = new_status
+        assignment.notes = notes
+        assignment.save()
+        
         assignment.request.save()
         
         UpdateLog.objects.create(
@@ -397,13 +411,13 @@ def assign_technician_view(request, request_id):
             }
         )
 
-        maintenance_request.status = 'assigned'
+        maintenance_request.status = 'pending'
         maintenance_request.save()
 
         UpdateLog.objects.create(
             request=maintenance_request,
             updated_by=request.user,
-            status='assigned',
+            status='pending',
             notes=f'Assigned to {technician.username}. {request.POST.get("notes", "")}',
         )
 

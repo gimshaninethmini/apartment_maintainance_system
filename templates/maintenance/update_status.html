@@ -142,7 +142,7 @@
                             <span class="info-label">Priority</span>
                             <div class="info-value">
                                 {% if assignment.request.priority == 'emergency' %}
-                                    <span class="priority-badge priority-emergency">🚨 Emergency</span>
+                                    <span class="priority-badge priority-emergency">Emergency</span>
                                 {% elif assignment.request.priority == 'high' %}
                                     <span class="priority-badge priority-high">High</span>
                                 {% elif assignment.request.priority == 'medium' %}
@@ -156,13 +156,13 @@
                             <span class="info-label">Current Status</span>
                             <div class="info-value">
                                 {% if assignment.request.status == 'completed' %}
-                                    <span class="status-badge status-completed"><i class="fas fa-check"></i> Completed</span>
+                                    <span class="status-badge status-completed">Completed</span>
                                 {% elif assignment.request.status == 'in_progress' %}
-                                    <span class="status-badge status-in_progress"><i class="fas fa-spinner"></i> In Progress</span>
+                                    <span class="status-badge status-in_progress">In Progress</span>
                                 {% elif assignment.request.status == 'reviewed' %}
-                                    <span class="status-badge status-reviewed"><i class="fas fa-eye"></i> Reviewed</span>
+                                    <span class="status-badge status-reviewed">Reviewed</span>
                                 {% else %}
-                                    <span class="status-badge status-assigned"><i class="fas fa-circle-notch"></i> Assigned</span>
+                                    <span class="status-badge status-assigned">Pending</span>
                                 {% endif %}
                             </div>
                         </div>
@@ -190,11 +190,13 @@
                             <label class="form-label"><i class="fas fa-sync-alt me-1"></i>New Status</label>
                             <select name="status" class="form-select" required>
                                 <option value="">-- Select new status --</option>
-                                <option value="reviewed">📋 Mark as Reviewed</option>
-                                <option value="in_progress">🔧 Start Work (In Progress)</option>
-                                <option value="completed">✅ Mark as Completed</option>
+                                {% if assignment.request.status == 'pending' %}
+                                <option value="in_progress">Start Work (In Progress)</option>
+                                {% elif assignment.request.status == 'in_progress' %}
+                                <option value="completed">Mark as Completed</option>
+                                {% endif %}
                             </select>
-                            <small class="text-muted" style="font-size: 12px;">Choose what stage the work is at</small>
+                            <small class="text-muted" style="font-size: 12px;">Choose the next stage for this task</small>
                         </div>
 
                         <!-- Notes textarea -->
