@@ -1,239 +1,366 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Tenant Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tenant Dashboard — AptFix</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F4F6FB; margin: 0; }
+
+        /* ── Navbar ── */
+        .top-navbar {
+            background: #1E1E2E; padding: 0 24px;
+            height: 60px; display: flex; align-items: center;
+            justify-content: space-between; position: sticky; top: 0; z-index: 100;
+        }
+        .nav-brand { display: flex; align-items: center; gap: 10px; color: #fff; font-size: 17px; font-weight: 700; }
+        .nav-brand .brand-icon { width: 34px; height: 34px; background: #7C3AED; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+        .nav-user { display: flex; align-items: center; gap: 10px; }
+        .nav-avatar { width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.12); color: #fff; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+        .nav-username { color: rgba(255,255,255,0.8); font-size: 13px; font-weight: 500; }
+        .role-pill { background: rgba(124,58,237,0.3); color: #C4B5FD; font-size: 11px; font-weight: 600; padding: 2px 10px; border-radius: 20px; }
+
+        /* ── Page ── */
+        .page-content { padding: 24px; }
+
+        /* ── Stat Cards ── */
+        .stat-card {
+            background: #fff; border-radius: 14px; border: 1px solid #E5E7EB;
+            padding: 18px; display: flex; align-items: center; gap: 14px;
+            transition: all 0.2s;
+            text-decoration: none; color: inherit;
+        }
+        .stat-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.10); transform: translateY(-2px); color: inherit; text-decoration: none; }
+        .stat-icon { width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+        .stat-label { font-size: 11px; font-weight: 600; color: #6B7280; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-value { font-size: 24px; font-weight: 700; color: #111827; line-height: 1.2; }
+
+        .stat-blue   .stat-icon { background:#EFF6FF; color:#3B82F6; }
+        .stat-yellow .stat-icon { background:#FFFBEB; color:#F59E0B; }
+        .stat-purple .stat-icon { background:#F5F3FF; color:#7C3AED; }
+        .stat-green  .stat-icon { background:#F0FDF4; color:#16A34A; }
+
+        /* ── Cards ── */
+        .apt-card { background:#fff; border-radius:14px; border:1px solid #E5E7EB; box-shadow:0 1px 4px rgba(0,0,0,0.06); }
+        .card-header-apt { padding:14px 20px; border-bottom:1px solid #E5E7EB; display:flex; align-items:center; justify-content:space-between; font-weight:600; font-size:14px; }
+
+        /* ── Table ── */
+        .apt-table { width:100%; border-collapse:collapse; font-size:13.5px; }
+        .apt-table thead th { background:#F9FAFB; color:#6B7280; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; padding:10px 16px; border-bottom:1px solid #E5E7EB; white-space:nowrap; }
+        .apt-table tbody td { padding:13px 16px; border-bottom:1px solid #F3F4F6; vertical-align:middle; }
+        .apt-table tbody tr:hover { background:#F9FAFB; cursor: pointer; }
+        .apt-table tbody tr:last-child td { border-bottom:none; }
+
+        /* ── Badges ── */
+        .status-badge { display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:20px; font-size:11.5px; font-weight:600; }
+        .status-submitted   { background:#F3F4F6; color:#374151; }
+        .status-assigned    { background:#FFFBEB; color:#B45309; }
+        .status-in_progress { background:#EDE9FE; color:#6D28D9; }
+        .status-completed   { background:#F0FDF4; color:#15803D; }
+        .status-cancelled   { background:#FEF2F2; color:#B91C1C; }
+
+        .priority-badge { display:inline-flex; align-items:center; padding:3px 9px; border-radius:20px; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.4px; }
+        .priority-low       { background:#F0FDF4; color:#15803D; }
+        .priority-medium    { background:#FFFBEB; color:#B45309; }
+        .priority-high      { background:#FFF7ED; color:#C2410C; }
+        .priority-emergency { background:#FEF2F2; color:#B91C1C; }
+
+        /* ── Forms ── */
+        .form-control, .form-select { font-size:13.5px; border-radius:8px; border:1px solid #E5E7EB; padding:8px 12px; font-family: 'Plus Jakarta Sans', sans-serif; }
+        .form-control:focus, .form-select:focus { border-color:#7C3AED; box-shadow:0 0 0 3px rgba(124,58,237,0.10); outline:none; }
+
+        /* ── Buttons ── */
+        .btn { font-size:13px; font-weight:500; border-radius:8px; font-family: 'Plus Jakarta Sans', sans-serif; }
+        .btn-primary { background:#7C3AED; border-color:#7C3AED; color:#fff; }
+        .btn-primary:hover { background:#6D28D9; border-color:#6D28D9; color:#fff; }
+        .btn-logout { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color:#fff; font-size:13px; border-radius:8px; padding:6px 14px; text-decoration:none; transition:all 0.2s; }
+        .btn-logout:hover { background: rgba(255,255,255,0.2); color:#fff; }
+
+        /* ── Pagination ── */
+        .page-link { font-size:13px; color:#374151; border-color:#E5E7EB; border-radius:8px !important; margin:0 2px; }
+        .page-item.active .page-link { background:#7C3AED; border-color:#7C3AED; }
+
+        /* ── Empty State ── */
+        .empty-state { text-align:center; padding:60px 20px; color:#9CA3AF; }
+        .empty-state i { font-size:48px; margin-bottom:16px; opacity:0.35; display:block; }
+        .empty-state h5 { color:#6B7280; font-size:15px; font-weight:600; }
+
+        /* ── Toast ── */
+        .toast-container { position:fixed; top:20px; right:20px; z-index:9999; display:flex; flex-direction:column; gap:10px; }
+        .toast-alert { display:flex; align-items:center; gap:12px; background:#fff; border-radius:10px; padding:12px 16px; box-shadow:0 4px 20px rgba(0,0,0,0.12); min-width:280px; border-left:4px solid; font-size:13.5px; font-weight:500; animation:slideIn 0.3s ease; }
+        .toast-success { border-color:#16A34A; } .toast-success .toast-icon { color:#16A34A; }
+        .toast-error   { border-color:#DC2626; } .toast-error   .toast-icon { color:#DC2626; }
+        .toast-info    { border-color:#3B82F6; } .toast-info    .toast-icon { color:#3B82F6; }
+        .toast-close { background:none; border:none; color:#9CA3AF; cursor:pointer; margin-left:auto; font-size:12px; }
+        @keyframes slideIn { from{opacity:0;transform:translateX(40px);} to{opacity:1;transform:translateX(0);} }
+    </style>
 </head>
 <body>
-    <nav class="navbar navbar-dark bg-primary">
-       <div class="container">
-        <span class="navbar-brand">🏢 Tenant Dashboard</span>
-        <div class="d-flex align-items-center">
-            <a href="{% url 'submit_request' %}" class="btn btn-light me-2">New Request</a>
-            <!-- Profile Dropdown -->
-            <div class="dropdown me-2">
-                <button class="btn btn-outline-light dropdown-toggle" type="button" 
-                        data-bs-toggle="dropdown">
-                    👤 {{ request.user.username }}
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li>
-                        <span class="dropdown-item-text">
-                            <small class="text-muted">Role: {{ request.user.userprofile.role|title }}</small>
-                        </span>
-                    </li>
-                    {% if request.user.userprofile.apartment_number %}
-                    <li>
-                        <span class="dropdown-item-text">
-                            <small class="text-muted">Apt: {{ request.user.userprofile.apartment_number }}</small>
-                        </span>
-                    </li>
-                    {% endif %}
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="{% url 'profile' %}">Edit Profile</a></li>
-                    <li><a class="dropdown-item text-danger" href="{% url 'logout' %}">Logout</a></li>
-                </ul>
-            </div>
-       </div>
-       </div>
-    </nav>
-    
-    <!-- Statistics Cards -->
-    <div class="container mt-4">
-      <div class="row">
-        <div class="col-md-3">
-            <div class="card text-white bg-primary mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Total Requests</h5>
-                    <h2>{{ total_count }}</h2>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card text-white bg-warning mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Pending</h5>
-                    <h2>{{ pending_count }}</h2>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card text-white bg-success mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Completed</h5>
-                    <h2>{{ completed_count }}</h2>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card text-white bg-info mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">In Progress</h5>
-                    <h2>{{ in_progress_count }}</h2>
-                </div>
-            </div>
-        </div>
-      </div>
-    </div>
-    <div class="container mt-3">
-      <div class="row mb-3">
-        <div class="col-md-6">
-            <input type="text" id="searchInput" class="form-control" placeholder="Search requests...">
-        </div>
-        <div class="col-md-3">
-            <select id="statusFilter" class="form-control">
-                <option value="all">All Status</option>
-                <option value="submitted">Submitted</option>
-                <option value="assigned">Assigned</option>
-                <option value="in_progress">In Progress</option>
-                <option value="completed">Completed</option>
-            </select>
-        </div>
-        <div class="col-md-3">
-            <select id="priorityFilter" class="form-control">
-                <option value="all">All Priority</option>
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-                <option value="emergency">Emergency</option>
-            </select>
-        </div>
-     </div>
-   </div>
 
-    <script>
+<!-- ── Navbar ── -->
+<div class="top-navbar">
+    <div class="nav-brand">
+        <div class="brand-icon"><i class="fas fa-home" style="color:#fff;"></i></div>
+        AptFix
+    </div>
+    <div class="nav-user">
+        <div class="nav-avatar">{{ request.user.username|first|upper }}</div>
+        <span class="nav-username">{{ request.user.username }}</span>
+        <span class="role-pill"><i class="fas fa-user me-1"></i>Tenant</span>
+        <div class="dropdown ms-2">
+            <button class="btn-logout dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                <i class="fas fa-user-circle me-1"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><span class="dropdown-item-text"><small class="text-muted">Role: Tenant</small></span></li>
+                {% if profile.apartment_number %}
+                <li><span class="dropdown-item-text"><small class="text-muted">Apt: {{ profile.apartment_number }}</small></span></li>
+                {% endif %}
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="fas fa-id-card me-2"></i>Edit Profile</a></li>
+                <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- ── Toast Notifications ── -->
+{% if messages %}
+<div class="toast-container">
+    {% for message in messages %}
+    <div class="toast-alert toast-{{ message.tags }}">
+        <div class="toast-icon">
+            {% if message.tags == 'success' %}<i class="fas fa-check-circle"></i>
+            {% elif message.tags == 'error' %}<i class="fas fa-exclamation-circle"></i>
+            {% else %}<i class="fas fa-info-circle"></i>{% endif %}
+        </div>
+        <span>{{ message }}</span>
+        <button class="toast-close" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="page-content">
+
+    <!-- ── Page Header ── -->
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h4 style="font-weight:700;margin:0;font-size:20px;">My Maintenance Requests</h4>
+            <p style="color:#6B7280;font-size:13px;margin:0;">Welcome back, {{ request.user.username }}</p>
+        </div>
+        <a href="{% url 'submit_request' %}" class="btn btn-primary btn-sm">
+            <i class="fas fa-plus me-1"></i>New Request
+        </a>
+    </div>
+
+    <!-- ── Stat Cards ── -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <div class="stat-card stat-blue">
+                <div class="stat-icon"><i class="fas fa-list-alt"></i></div>
+                <div><div class="stat-label">Total</div><div class="stat-value">{{ total_count|default:requests.paginator.count }}</div></div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card stat-yellow">
+                <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                <div><div class="stat-label">Pending</div><div class="stat-value">{{ pending_count|default:0 }}</div></div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card stat-purple">
+                <div class="stat-icon"><i class="fas fa-spinner"></i></div>
+                <div><div class="stat-label">In Progress</div><div class="stat-value">{{ in_progress_count|default:0 }}</div></div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card stat-green">
+                <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                <div><div class="stat-label">Completed</div><div class="stat-value">{{ completed_count|default:0 }}</div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Search & Filter ── -->
+    <div class="apt-card mb-4">
+        <div class="card-header-apt">
+            <span><i class="fas fa-filter me-2 text-muted"></i>Search & Filter</span>
+        </div>
+        <div class="p-3">
+            <div class="row g-2">
+                <div class="col-12">
+                    <div class="input-group">
+                        <span class="input-group-text" style="background:#F9FAFB;border-color:#E5E7EB;">
+                            <i class="fas fa-search" style="color:#9CA3AF;font-size:12px;"></i>
+                        </span>
+                        <input type="text" id="searchInput" class="form-control" placeholder="Search by title...">
+                    </div>
+                </div>
+                <div class="col-6">
+                    <select id="statusFilter" class="form-select">
+                        <option value="all">All Statuses</option>
+                        <option value="submitted">Submitted</option>
+                        <option value="assigned">Assigned</option>
+                        <option value="in_progress">In Progress</option>
+                        <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <div class="col-6">
+                    <select id="priorityFilter" class="form-select">
+                        <option value="all">All Priorities</option>
+                        <option value="emergency">Emergency</option>
+                        <option value="high">High</option>
+                        <option value="medium">Medium</option>
+                        <option value="low">Low</option>
+                    </select>
+                </div>
+                <div class="col-6">
+                    <button class="btn btn-primary w-100" onclick="applyFilters()">
+                        <i class="fas fa-search me-1"></i>Apply Filters
+                    </button>
+                </div>
+                <div class="col-6">
+                    <button class="btn btn-outline-secondary w-100" onclick="clearFilters()">
+                        <i class="fas fa-times me-1"></i>Clear
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Requests Table ── -->
+    <div class="apt-card">
+        <div class="card-header-apt">
+            <span><i class="fas fa-clipboard-list me-2 text-muted"></i>My Maintenance Requests</span>
+            <span style="font-size:12px;color:#9CA3AF;font-weight:400;">
+                {{ requests.paginator.count }} request{{ requests.paginator.count|pluralize }}
+            </span>
+        </div>
+
+        {% if requests %}
+        <div style="overflow-x:auto;">
+            <table class="apt-table" id="requestsTable">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>Submitted</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for request in requests %}
+                    <tr onclick="window.location='{% url 'request_detail' request.id %}'">
+                        <td>
+                            <div style="font-weight:600;">{{ request.title }}</div>
+                            <div style="font-size:12px;color:#9CA3AF;">{{ request.description|truncatechars:50 }}</div>
+                        </td>
+                        <td><span class="priority-badge priority-{{ request.priority }}">{{ request.priority }}</span></td>
+                        <td><span class="status-badge status-{{ request.status }}">{{ request.get_status_display }}</span></td>
+                        <td style="font-size:12px;color:#6B7280;">{{ request.created_at|date:"M d, Y" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if requests.has_other_pages %}
+        <div class="p-3 border-top d-flex justify-content-center">
+            <nav><ul class="pagination pagination-sm mb-0">
+                {% if requests.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ requests.previous_page_number }}">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                </li>
+                {% endif %}
+                {% for num in requests.paginator.page_range %}
+                <li class="page-item {% if requests.number == num %}active{% endif %}">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+                {% endfor %}
+                {% if requests.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ requests.next_page_number }}">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+                {% endif %}
+            </ul></nav>
+        </div>
+        {% endif %}
+
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-clipboard-list"></i>
+            <h5>No requests found</h5>
+            <p style="font-size:13px;">Click "New Request" to submit your first maintenance request.</p>
+        </div>
+        {% endif %}
+    </div>
+
+</div><!-- end page-content -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Search and Filter Functions
+    function filterRequests() {
+        let searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        let statusFilter = document.getElementById('statusFilter').value;
+        let priorityFilter = document.getElementById('priorityFilter').value;
+        let rows = document.querySelectorAll('#requestsTable tbody tr');
+        
+        rows.forEach(row => {
+            if (row.querySelector('td')) {
+                let title = row.cells[0].textContent.toLowerCase();
+                let status = row.cells[2].textContent.toLowerCase();
+                let priority = row.cells[1].textContent.toLowerCase();
+                
+                let matchesSearch = title.includes(searchTerm);
+                let matchesStatus = statusFilter === 'all' || status.includes(statusFilter);
+                let matchesPriority = priorityFilter === 'all' || priority.includes(priorityFilter);
+                
+                if (matchesSearch && matchesStatus && matchesPriority) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            }
+        });
+    }
+    
+    function applyFilters() {
+        filterRequests();
+    }
+    
+    function clearFilters() {
+        document.getElementById('searchInput').value = '';
+        document.getElementById('statusFilter').value = 'all';
+        document.getElementById('priorityFilter').value = 'all';
+        filterRequests();
+    }
+    
     document.getElementById('searchInput').addEventListener('keyup', filterRequests);
     document.getElementById('statusFilter').addEventListener('change', filterRequests);
     document.getElementById('priorityFilter').addEventListener('change', filterRequests);
 
-    function filterRequests() {
-        let search = document.getElementById('searchInput').value.toLowerCase();
-        let status = document.getElementById('statusFilter').value;
-        let priority = document.getElementById('priorityFilter').value;
-        let rows = document.querySelectorAll('#requestsTable tbody tr');
-    
-        rows.forEach(row => {
-           // columns: 0=Title, 1=Priority, 2=Status, 3=Submitted
-           let title = row.cells[0].textContent.toLowerCase();
-           let rowPriority = row.cells[1].textContent.toLowerCase();
-           let rowStatus = row.cells[2].textContent.toLowerCase();
-        
-           let matchesSearch = title.includes(search);
-           let matchesStatus = status === 'all' || rowStatus.includes(status);
-           let matchesPriority = priority === 'all' || rowPriority.includes(priority);
-        
-           if (matchesSearch && matchesStatus && matchesPriority) {
-            row.style.display = '';
-           } else {
-            row.style.display = 'none';
-           }
-        });
-     }
-     </script>
-    
-    <!-- Requests Table -->
-    <div class="container mt-4">
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header bg-success text-white">
-                        <h4>My Maintenance Requests</h4>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover" id="requestsTable" style="cursor: pointer;">
-                                <thead>
-                                    <tr>
-                                        <th>Title</th>
-                                        <th>Priority</th>
-                                        <th>Status</th>
-                                        <th>Submitted</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for request in requests %}
-                                    <tr onclick="window.location='{% url 'request_detail' request_id=request.id %}'">
-                                        <td>{{ request.title }}</td>
-                                        <td>
-                                            {% if request.priority == 'high' %}
-                                                <span class="badge bg-danger">{{ request.priority }}</span>
-                                            {% elif request.priority == 'medium' %}
-                                                <span class="badge bg-warning">{{ request.priority }}</span>
-                                            {% else %}
-                                                <span class="badge bg-info">{{ request.priority }}</span>
-                                            {% endif %}
-                                        </td>
-                                        <td>
-                                            {% if request.status == 'completed' %}
-                                                <span class="badge bg-success">{{ request.status }}</span>
-                                            {% elif request.status == 'in_progress' %}
-                                                <span class="badge bg-primary">{{ request.status }}</span>
-                                            {% elif request.status == 'assigned' %}
-                                                <span class="badge bg-info">{{ request.status }}</span>
-                                            {% else %}
-                                                <span class="badge bg-secondary">{{ request.status }}</span>
-                                            {% endif %}
-                                        </td>
-                                        <td>{{ request.created_at|date:"M d, Y" }}</td>
-                                    </tr>
-                                    {% empty %}
-                                    <tr>
-                                        <td colspan="4" class="text-center">No requests submitted yet</td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- PAGINATION CONTROLS -->
-    {% if requests.has_other_pages %}
-    <div class="container mt-3">
-        <div class="row">
-            <div class="col-12">
-                <nav aria-label="Page navigation">
-                    <ul class="pagination justify-content-center">
-                        {% if requests.has_previous %}
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ requests.previous_page_number }}">Previous</a>
-                            </li>
-                        {% else %}
-                            <li class="page-item disabled">
-                                <a class="page-link" href="#">Previous</a>
-                            </li>
-                        {% endif %}
-                        
-                        {% for num in requests.paginator.page_range %}
-                            {% if requests.number == num %}
-                                <li class="page-item active">
-                                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
-                                </li>
-                            {% else %}
-                                <li class="page-item">
-                                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
-                                </li>
-                            {% endif %}
-                        {% endfor %}
-                        
-                        {% if requests.has_next %}
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ requests.next_page_number }}">Next</a>
-                            </li>
-                        {% else %}
-                            <li class="page-item disabled">
-                                <a class="page-link" href="#">Next</a>
-                            </li>
-                        {% endif %}
-                    </ul>
-                </nav>
-            </div>
-        </div>
-    </div>
-    {% endif %}
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    // Auto-dismiss toasts after 4 seconds
+    document.querySelectorAll('.toast-alert').forEach(t => {
+        setTimeout(() => {
+            t.style.opacity = '0';
+            t.style.transform = 'translateX(100%)';
+            t.style.transition = 'all 0.4s';
+            setTimeout(() => t.remove(), 400);
+        }, 4000);
+    });
+</script>
+
 </body>
 </html>
