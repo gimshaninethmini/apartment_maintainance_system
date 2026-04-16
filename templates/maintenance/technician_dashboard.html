@@ -126,7 +126,7 @@
             <div class="col-md-3">
                 <div class="stat-card stat-blue">
                     <div class="stat-icon">
-                        <i class="fas fa-tasks"></i>
+                        <i class="fas fa-list-check"></i>
                     </div>
                     <div>
                         <div class="stat-label">Total Tasks</div>
@@ -138,7 +138,7 @@
             <div class="col-md-3">
                 <div class="stat-card stat-yellow">
                     <div class="stat-icon">
-                        <i class="fas fa-circle-notch"></i>
+                        <i class="fas fa-hourglass-start"></i>
                     </div>
                     <div>
                         <div class="stat-label">Pending</div>
@@ -150,7 +150,7 @@
             <div class="col-md-3">
                 <div class="stat-card stat-purple">
                     <div class="stat-icon">
-                        <i class="fas fa-eye"></i>
+                        <i class="fas fa-clipboard-check"></i>
                     </div>
                     <div>
                         <div class="stat-label">Reviewed</div>
@@ -162,7 +162,7 @@
             <div class="col-md-3">
                 <div class="stat-card stat-indigo">
                     <div class="stat-icon">
-                        <i class="fas fa-spinner"></i>
+                        <i class="fas fa-hammer"></i>
                     </div>
                     <div>
                         <div class="stat-label">In Progress</div>
@@ -174,7 +174,7 @@
             <div class="col-md-3">
                 <div class="stat-card stat-green">
                     <div class="stat-icon">
-                        <i class="fas fa-check-circle"></i>
+                        <i class="fas fa-check"></i>
                     </div>
                     <div>
                         <div class="stat-label">Completed</div>
@@ -229,7 +229,7 @@
                                 <!-- Priority with color badge -->
                                 <td>
                                     {% if assignment.request.priority == 'emergency' %}
-                                        <span class="priority-badge priority-emergency">🚨 Emergency</span>
+                                        <span class="priority-badge priority-emergency">Emergency</span>
                                     {% elif assignment.request.priority == 'high' %}
                                         <span class="priority-badge priority-high">High</span>
                                     {% elif assignment.request.priority == 'medium' %}
@@ -242,11 +242,11 @@
                                 <!-- Status with color badge -->
                                 <td>
                                     {% if assignment.request.status == 'completed' %}
-                                        <span class="status-badge status-completed"><i class="fas fa-check"></i> Completed</span>
+                                        <span class="status-badge status-completed">Completed</span>
                                     {% elif assignment.request.status == 'in_progress' %}
-                                        <span class="status-badge status-in_progress"><i class="fas fa-spinner"></i> In Progress</span>
+                                        <span class="status-badge status-in_progress">In Progress</span>
                                     {% else %}
-                                        <span class="status-badge status-assigned"><i class="fas fa-circle-notch"></i> Pending</span>
+                                        <span class="status-badge status-assigned">Pending</span>
                                     {% endif %}
                                 </td>
                                 

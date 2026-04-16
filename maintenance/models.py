@@ -32,7 +32,7 @@ class MaintenanceRequest(models.Model):
     STATUS_CHOICES = (
         ('submitted', 'Submitted'),
         ('reviewed', 'Reviewed'),
-        ('assigned', 'Assigned'),
+        ('pending', 'Pending'),
         ('in_progress', 'In Progress'),
         ('completed', 'Completed'),
         ('cancelled', 'Cancelled'),
