@@ -30,3 +30,7 @@ urlpatterns = [
     # Technician URLs
     path('update/<int:request_id>/', views.update_status_view, name='update_status'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
