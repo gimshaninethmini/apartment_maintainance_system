@@ -216,7 +216,7 @@
                         <!-- Notes textarea -->
                         <div class="mb-4">
                             <label class="form-label"><i class="fas fa-pen me-1"></i>Work Notes / Updates</label>
-                            <textarea name="notes" rows="6" class="form-control" placeholder="Describe the work you've done or current progress...">{{ assignment.notes }}</textarea>
+                            <textarea name="notes" id="notesField" rows="6" class="form-control" placeholder="Describe the work you've done or current progress..."></textarea>
                             <small class="text-muted" style="font-size: 12px;">Tell us what you've fixed or what the current situation is</small>
                         </div>
 
@@ -248,6 +248,23 @@
             t.style.transition = 'all 0.4s';
             setTimeout(() => t.remove(), 400);
         }, 4000);
+    });
+    
+    // Clear notes when status changes to completed
+    const notesField = document.getElementById('notesField');
+    const statusSelect = document.querySelector('select[name="status"]');
+    
+    statusSelect.addEventListener('change', (e) => {
+        if (e.target.value === 'completed') {
+            notesField.value = '';
+        }
+    });
+    
+    // Clear notes after form submission
+    document.querySelector('form').addEventListener('submit', () => {
+        setTimeout(() => {
+            notesField.value = '';
+        }, 100);
     });
 </script>
 

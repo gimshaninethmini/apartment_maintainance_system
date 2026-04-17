@@ -137,6 +137,57 @@
         .toast-info    { border-color:#3B82F6; } .toast-info    .toast-icon { color:#3B82F6; }
         .toast-close { background:none; border:none; color:#9CA3AF; cursor:pointer; margin-left:auto; font-size:12px; }
         @keyframes slideIn { from{opacity:0;transform:translateX(40px);} to{opacity:1;transform:translateX(0);} }
+
+        /* ── Timeline Styling ── */
+        .timeline { position: relative; margin: 20px 0; }
+        .timeline-item { position: relative; padding-left: 40px; margin: 16px 0; }
+        .timeline-dot { 
+            position: absolute; left: 0; top: 0;
+            width: 14px; height: 14px; 
+            border-radius: 50%; 
+            border: 3px solid #7C3AED; 
+            background: #fff;
+            box-shadow: 0 0 0 2px #F4F6FB;
+        }
+        .timeline-dot.submitted { border-color: #6B7280; }
+        .timeline-dot.reviewed { border-color: #3B82F6; }
+        .timeline-dot.assigned { border-color: #F59E0B; }
+        .timeline-dot.in_progress { border-color: #4F46E5; }
+        .timeline-dot.pending { border-color: #F59E0B; }
+        .timeline-dot.completed { border-color: #16A34A; }
+        .timeline-line { 
+            position: absolute; left: 6px; top: 15px; 
+            bottom: -20px; width: 2px; 
+            background: #E5E7EB;
+        }
+        .timeline-item:last-child .timeline-line { display: none; }
+        .timeline-content { 
+            background: #F9FAFB;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 13px;
+        }
+        .timeline-header { 
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .timeline-time { 
+            font-size: 11px;
+            color: #9CA3AF;
+            margin-top: 4px;
+        }
+        .timeline-notes {
+            color: #374151;
+            margin-top: 6px;
+            padding-top: 6px;
+            border-top: 1px solid #E5E7EB;
+            font-size: 12px;
+        }
     </style>
 </head>
 <body>
@@ -259,7 +310,8 @@
                         </thead>
                         <tbody>
                             <!-- Loop through each assigned task -->
-                            {% for assignment in assignments %}
+                            {% for item in assignments_with_logs %}
+                            {% with assignment=item.assignment logs=item.logs %}
                             <tr>
                                 <!-- Request ID -->
                                 <td><strong>#{{ assignment.request.id }}</strong></td>
@@ -416,6 +468,35 @@
                                                 </p>
                                             </div>
                                             {% endif %}
+
+                                            <!-- History Timeline -->
+                                            {% if logs %}
+                                            <div class="mb-4">
+                                                <div style="font-size: 13px; font-weight: 600; color: #6B7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">Update History</div>
+                                                <div class="timeline">
+                                                    {% for log in logs %}
+                                                    <div class="timeline-item">
+                                                        <div class="timeline-dot {{ log.status }}"></div>
+                                                        <div class="timeline-line"></div>
+                                                        <div class="timeline-content">
+                                                            <div class="timeline-header">
+                                                                <span>{{ log.status|title }}</span>
+                                                            </div>
+                                                            <div style="color: #6B7280; font-size: 12px;">
+                                                                By: <strong>{{ log.updated_by.username }}</strong>
+                                                            </div>
+                                                            <div class="timeline-time">{{ log.created_at|date:"M d, Y H:i" }}</div>
+                                                            {% if log.notes %}
+                                                            <div class="timeline-notes">
+                                                                <strong>Notes:</strong> {{ log.notes|truncatewords:20 }}
+                                                            </div>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                            {% endif %}
                                         </div>
                                         <!-- Modal footer with button -->
                                         <div class="modal-footer" style="border-top: 1px solid #E5E7EB; padding: 12px 24px;">
@@ -427,6 +508,7 @@
                                     </div>
                                 </div>
                             </div>
+                            {% endwith %}
                             {% endfor %}
                         </tbody>
                     </table>
