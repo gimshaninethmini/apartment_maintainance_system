@@ -183,7 +183,6 @@ def dashboard_view(request):
         # Calculate status counts
         total_count = assignments.count()
         pending_count = assignments.filter(request__status='pending').count()
-        reviewed_count = assignments.filter(request__status='reviewed').count()
         in_progress_count = assignments.filter(request__status='in_progress').count()
         completed_count = assignments.filter(request__status='completed').count()
         
@@ -191,7 +190,6 @@ def dashboard_view(request):
             'assignments': assignments,
             'total_count': total_count,
             'pending_count': pending_count,
-            'reviewed_count': reviewed_count,
             'in_progress_count': in_progress_count,
             'completed_count': completed_count,
         })
@@ -297,8 +295,9 @@ def update_status_view(request, request_id):
         
         # Validate status transition
         valid_transitions = {
-            'pending': ['in_progress'],
+            'pending': ['in_progress', 'completed'],
             'in_progress': ['completed'],
+            'completed': [],
         }
         
         if current_status not in valid_transitions or new_status not in valid_transitions[current_status]:
