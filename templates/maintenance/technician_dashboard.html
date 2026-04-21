@@ -25,6 +25,51 @@
         .nav-username { color: rgba(255,255,255,0.8); font-size: 13px; font-weight: 500; }
         .role-pill { background: rgba(124,58,237,0.3); color: #C4B5FD; font-size: 11px; font-weight: 600; padding: 2px 10px; border-radius: 20px; }
 
+        /* ── Dropdown Menu Styling ── */
+        .dropdown-menu {
+            border-radius: 12px !important;
+            border: 1px solid #E5E7EB !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important;
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
+            padding: 8px 0 !important;
+        }
+        .dropdown-item {
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
+            font-size: 13px !important;
+            font-weight: 500 !important;
+            padding: 10px 20px !important;
+            color: #374151 !important;
+            transition: all 0.2s ease !important;
+        }
+        .dropdown-item i {
+            width: 20px;
+            color: #9CA3AF;
+            font-size: 14px;
+        }
+        .dropdown-item:hover {
+            background: #F3F4F6 !important;
+            color: #111827 !important;
+        }
+        .dropdown-item:hover i {
+            color: #7C3AED !important;
+        }
+        .dropdown-item.text-danger {
+            color: #DC2626 !important;
+        }
+        .dropdown-item.text-danger:hover {
+            background: #FEF2F2 !important;
+            color: #B91C1C !important;
+        }
+        .dropdown-item.text-danger:hover i {
+            color: #DC2626 !important;
+        }
+        .dropdown-divider {
+            margin: 8px 0 !important;
+            border-color: #E5E7EB !important;
+        }
+        .dropdown-item-text { padding: 10px 20px; font-size: 13px; }
+        .dropdown-item-text strong { color: #111827; display: block; }
+
         /* ── Page ── */
         .page-content { padding: 24px; }
 
@@ -92,6 +137,57 @@
         .toast-info    { border-color:#3B82F6; } .toast-info    .toast-icon { color:#3B82F6; }
         .toast-close { background:none; border:none; color:#9CA3AF; cursor:pointer; margin-left:auto; font-size:12px; }
         @keyframes slideIn { from{opacity:0;transform:translateX(40px);} to{opacity:1;transform:translateX(0);} }
+
+        /* ── Timeline Styling ── */
+        .timeline { position: relative; margin: 20px 0; }
+        .timeline-item { position: relative; padding-left: 40px; margin: 16px 0; }
+        .timeline-dot { 
+            position: absolute; left: 0; top: 0;
+            width: 14px; height: 14px; 
+            border-radius: 50%; 
+            border: 3px solid #7C3AED; 
+            background: #fff;
+            box-shadow: 0 0 0 2px #F4F6FB;
+        }
+        .timeline-dot.submitted { border-color: #6B7280; }
+        .timeline-dot.reviewed { border-color: #3B82F6; }
+        .timeline-dot.assigned { border-color: #F59E0B; }
+        .timeline-dot.in_progress { border-color: #4F46E5; }
+        .timeline-dot.pending { border-color: #F59E0B; }
+        .timeline-dot.completed { border-color: #16A34A; }
+        .timeline-line { 
+            position: absolute; left: 6px; top: 15px; 
+            bottom: -20px; width: 2px; 
+            background: #E5E7EB;
+        }
+        .timeline-item:last-child .timeline-line { display: none; }
+        .timeline-content { 
+            background: #F9FAFB;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 13px;
+        }
+        .timeline-header { 
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .timeline-time { 
+            font-size: 11px;
+            color: #9CA3AF;
+            margin-top: 4px;
+        }
+        .timeline-notes {
+            color: #374151;
+            margin-top: 6px;
+            padding-top: 6px;
+            border-top: 1px solid #E5E7EB;
+            font-size: 12px;
+        }
     </style>
 </head>
 <body>
@@ -101,19 +197,37 @@
             <div class="brand-icon">
                 <i class="fas fa-tools"></i>
             </div>
-            <span>Technician Dashboard</span>
+            <span>FixIt</span>
         </div>
         <div class="nav-user">
-            <div class="nav-avatar" title="{{ request.user.username }}">
-                {{ request.user.username|slice:":1"|upper }}
+            <div class="dropdown">
+                <button class="d-flex align-items-center gap-2 btn btn-link text-white text-decoration-none" 
+                        type="button" data-bs-toggle="dropdown" 
+                        style="background: none; border: none;">
+                    <div class="nav-avatar">{{ request.user.username|first|upper }}</div>
+                    <span class="nav-username">{{ request.user.username }}</span>
+                    <i class="fas fa-chevron-down" style="font-size: 10px; color: rgba(255,255,255,0.6);"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                        <div class="dropdown-item-text">
+                            <div><strong>{{ request.user.username }}</strong></div>
+                            <small class="text-muted">Role: Technician</small>
+                        </div>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{% url 'dashboard' %}">
+                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                    </a></li>
+                    <li><a class="dropdown-item" href="{% url 'profile' %}">
+                        <i class="fas fa-id-card me-2"></i>Edit Profile
+                    </a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item text-danger" href="{% url 'logout' %}">
+                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                    </a></li>
+                </ul>
             </div>
-            <div>
-                <div class="nav-username">{{ request.user.username }}</div>
-                <div class="role-pill">Technician</div>
-            </div>
-            <a href="{% url 'logout' %}" class="btn-logout" title="Logout">
-                <i class="fas fa-sign-out-alt"></i> Logout
-            </a>
         </div>
     </div>
     
@@ -146,19 +260,7 @@
                     </div>
                 </div>
             </div>
-            <!-- Card 3: Reviewed Tasks -->
-            <div class="col-md-3">
-                <div class="stat-card stat-purple">
-                    <div class="stat-icon">
-                        <i class="fas fa-clipboard-check"></i>
-                    </div>
-                    <div>
-                        <div class="stat-label">Reviewed</div>
-                        <div class="stat-value">{{ reviewed_count }}</div>
-                    </div>
-                </div>
-            </div>
-            <!-- Card 4: In Progress -->
+            <!-- Card 3: In Progress -->
             <div class="col-md-3">
                 <div class="stat-card stat-indigo">
                     <div class="stat-icon">
@@ -170,7 +272,7 @@
                     </div>
                 </div>
             </div>
-            <!-- Card 5: Completed -->
+            <!-- Card 4: Completed -->
             <div class="col-md-3">
                 <div class="stat-card stat-green">
                     <div class="stat-icon">
@@ -208,7 +310,8 @@
                         </thead>
                         <tbody>
                             <!-- Loop through each assigned task -->
-                            {% for assignment in assignments %}
+                            {% for item in assignments_with_logs %}
+                            {% with assignment=item.assignment logs=item.logs %}
                             <tr>
                                 <!-- Request ID -->
                                 <td><strong>#{{ assignment.request.id }}</strong></td>
@@ -331,6 +434,22 @@
                                                     {{ assignment.request.description }}
                                                 </p>
                                             </div>
+                                            {% if assignment.request.image %}
+                                            <div class="mb-4">
+                                                <div style="font-size: 13px; font-weight: 600; color: #6B7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">Attached Image</div>
+                                                <div style="background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 8px; padding: 12px; text-align: center;">
+                                                    <img src="{{ assignment.request.image.url }}" alt="Request Image" style="max-width: 100%; max-height: 400px; border-radius: 6px;">
+                                                </div>
+                                            </div>
+                                            {% else %}
+                                            <div class="mb-4">
+                                                <div style="font-size: 13px; font-weight: 600; color: #6B7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">Attached Image</div>
+                                                <div style="background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 8px; padding: 40px; text-align: center; color: #9CA3AF;">
+                                                    <i class="fas fa-image" style="font-size: 32px; margin-bottom: 10px; display: block; opacity: 0.5;"></i>
+                                                    <p style="font-size: 13px; margin: 0;">No image attached</p>
+                                                </div>
+                                            </div>
+                                            {% endif %}
                                             <div class="row mb-4">
                                                 <div class="col-md-6">
                                                     <div style="font-size: 13px; font-weight: 600; color: #6B7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px;">Assigned Date</div>
@@ -349,6 +468,35 @@
                                                 </p>
                                             </div>
                                             {% endif %}
+
+                                            <!-- History Timeline -->
+                                            {% if logs %}
+                                            <div class="mb-4">
+                                                <div style="font-size: 13px; font-weight: 600; color: #6B7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">Update History</div>
+                                                <div class="timeline">
+                                                    {% for log in logs %}
+                                                    <div class="timeline-item">
+                                                        <div class="timeline-dot {{ log.status }}"></div>
+                                                        <div class="timeline-line"></div>
+                                                        <div class="timeline-content">
+                                                            <div class="timeline-header">
+                                                                <span>{{ log.status|title }}</span>
+                                                            </div>
+                                                            <div style="color: #6B7280; font-size: 12px;">
+                                                                By: <strong>{{ log.updated_by.username }}</strong>
+                                                            </div>
+                                                            <div class="timeline-time">{{ log.created_at|date:"M d, Y H:i" }}</div>
+                                                            {% if log.notes %}
+                                                            <div class="timeline-notes">
+                                                                <strong>Notes:</strong> {{ log.notes|truncatewords:20 }}
+                                                            </div>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                            {% endif %}
                                         </div>
                                         <!-- Modal footer with button -->
                                         <div class="modal-footer" style="border-top: 1px solid #E5E7EB; padding: 12px 24px;">
@@ -360,6 +508,7 @@
                                     </div>
                                 </div>
                             </div>
+                            {% endwith %}
                             {% endfor %}
                         </tbody>
                     </table>

@@ -19,7 +19,8 @@
         .nav-brand { display: flex; align-items: center; gap: 10px; color: #fff; font-size: 17px; font-weight: 700; }
         .nav-brand .brand-icon { width: 34px; height: 34px; background: #7C3AED; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; }
         .nav-user { display: flex; align-items: center; gap: 10px; }
-        .nav-avatar { width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.12); color: #fff; font-size: 16px; display: flex; align-items: center; justify-content: center; }
+        .nav-avatar { width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.12); color: #fff; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+        .nav-username { color: rgba(255,255,255,0.8); font-size: 13px; font-weight: 500; }
 
         .page-content { padding: 24px; }
 
@@ -42,6 +43,45 @@
         .info-value { flex: 1; color: #111827; font-size: 13px; font-family: 'Plus Jakarta Sans', sans-serif; }
 
         .role-badge { background: #F3F4F6; color: #374151; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; font-family: 'Plus Jakarta Sans', sans-serif; }
+        .dropdown-item-text { padding: 10px 20px; font-size: 13px; }
+        .dropdown-item-text strong { color: #111827; display: block; }
+
+        /* ── Stat Cards ── */
+        .stat-card {
+            background: #fff; border-radius: 14px; border: 1px solid #E5E7EB;
+            padding: 18px; display: flex; align-items: center; gap: 14px;
+            text-decoration: none; color: inherit; transition: all 0.2s;
+        }
+        .stat-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.10); transform: translateY(-2px); color: inherit; text-decoration: none; }
+        .stat-icon { width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+        .stat-label { font-size: 11px; font-weight: 600; color: #6B7280; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-value { font-size: 24px; font-weight: 700; color: #111827; line-height: 1.2; }
+
+        .stat-blue   .stat-icon { background:#EFF6FF; color:#3B82F6; }
+        .stat-yellow .stat-icon { background:#FFFBEB; color:#F59E0B; }
+        .stat-indigo .stat-icon { background:#EEF2FF; color:#4F46E5; }
+        .stat-green  .stat-icon { background:#F0FDF4; color:#16A34A; }
+
+        /* ── Status Badges ── */
+        .status-badge { display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:20px; font-size:11.5px; font-weight:600; }
+        .status-submitted   { background:#F3F4F6; color:#374151; }
+        .status-reviewed    { background:#EFF6FF; color:#1D4ED8; }
+        .status-assigned    { background:#FFFBEB; color:#B45309; }
+        .status-in_progress { background:#EDE9FE; color:#6D28D9; }
+        .status-completed   { background:#F0FDF4; color:#15803D; }
+        .status-cancelled   { background:#FEF2F2; color:#B91C1C; }
+
+        /* ── Priority Badges ── */
+        .priority-badge { display:inline-flex; align-items:center; padding:3px 9px; border-radius:20px; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.4px; }
+        .priority-low       { background:#F0FDF4; color:#15803D; }
+        .priority-medium    { background:#FFFBEB; color:#B45309; }
+        .priority-high      { background:#FFF7ED; color:#C2410C; }
+        .priority-emergency { background:#FEF2F2; color:#B91C1C; }
+
+        /* ── Empty State ── */
+        .empty-state { text-align:center; padding:60px 20px; color:#9CA3AF; }
+        .empty-state i { font-size:48px; margin-bottom:16px; opacity:0.35; display:block; }
+        .empty-state h5 { color:#6B7280; font-size:15px; font-weight:600; }
 
         /* ── DROPDOWN MENU STYLING (FIXIT THEME) ── */
         .dropdown-menu {
@@ -107,11 +147,21 @@
             <button class="d-flex align-items-center gap-2 btn btn-link text-white text-decoration-none" 
                     type="button" data-bs-toggle="dropdown" 
                     style="background: none; border: none;">
-                <div class="nav-avatar"><i class="fas fa-user"></i></div>
-                <span style="color:rgba(255,255,255,0.8); font-size:13px;">{{ request.user.username }}</span>
+                <div class="nav-avatar">{{ request.user.username|first|upper }}</div>
+                <span class="nav-username">{{ request.user.username }}</span>
                 <i class="fas fa-chevron-down" style="font-size: 10px; color: rgba(255,255,255,0.6);"></i>
             </button>
             <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                    <div class="dropdown-item-text">
+                        <div><strong>{{ request.user.username }}</strong></div>
+                        <small class="text-muted">Role: {{ profile.role|title }}</small>
+                        {% if profile.apartment_number %}
+                        <div><small class="text-muted">Apt: {{ profile.apartment_number }}</small></div>
+                        {% endif %}
+                    </div>
+                </li>
+                <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item" href="{% url 'dashboard' %}">
                     <i class="fas fa-tachometer-alt me-2"></i>Dashboard
                 </a></li>
@@ -146,6 +196,31 @@
 <div class="page-content">
     <div class="row">
         <div class="col-lg-6 mx-auto">
+            <!-- Profile Stats -->
+            <div class="row mb-4" style="gap: 14px;">
+                <div class="col-md-6">
+                    <div class="stat-card stat-blue">
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar"></i>
+                        </div>
+                        <div>
+                            <div class="stat-label">Account Created</div>
+                            <div class="stat-value" style="font-size: 18px;">{{ request.user.date_joined|date:"M d, Y" }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="stat-card stat-yellow">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div>
+                            <div class="stat-label">Last Login</div>
+                            <div class="stat-value" style="font-size: 18px;">{% if request.user.last_login %}{{ request.user.last_login|date:"M d" }}{% else %}Never{% endif %}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="apt-card mb-4">
                 <div class="card-header-apt">
                     <span><i class="fas fa-id-card me-2 text-muted"></i>Edit Profile</span>
@@ -196,9 +271,14 @@
                     <span><i class="fas fa-shield-alt me-2 text-muted"></i>Account Information</span>
                 </div>
                 <div class="p-4">
-                    <div class="info-row"><div class="info-label">Account Created</div><div class="info-value">{{ request.user.date_joined|date:"F d, Y" }}</div></div>
-                    <div class="info-row"><div class="info-label">Last Login</div><div class="info-value">{{ request.user.last_login|date:"F d, Y H:i"|default:"Never" }}</div></div>
-                    <div class="info-row"><div class="info-label">Role</div><div class="info-value">{{ profile.role|title }}</div></div>
+                    <div class="info-row"><div class="info-label">Username</div><div class="info-value">{{ request.user.username }}</div></div>
+                    <div class="info-row"><div class="info-label">Email</div><div class="info-value">{{ request.user.email }}</div></div>
+                    <div class="info-row"><div class="info-label">Phone</div><div class="info-value">{{ profile.phone|default:"Not provided" }}</div></div>
+                    <div class="info-row"><div class="info-label">Role</div><div class="info-value"><span class="status-badge" style="background:#EEF2FF; color:#4F46E5;">{{ profile.role|title }}</span></div></div>
+                    {% if profile.role == 'tenant' %}
+                    <div class="info-row"><div class="info-label">Apartment</div><div class="info-value">{{ profile.apartment_number|default:"Not set" }}</div></div>
+                    {% endif %}
+                    <div class="info-row" style="border-bottom: none;"><div class="info-label">Member Since</div><div class="info-value">{{ request.user.date_joined|date:"F d, Y" }}</div></div>
                 </div>
             </div>
         </div>

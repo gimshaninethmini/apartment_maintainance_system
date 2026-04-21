@@ -115,16 +115,37 @@
 <!-- ── Navbar ── -->
 <div class="top-navbar">
     <div class="nav-brand">
-        <div class="brand-icon"><i class="fas fa-building" style="color:#fff;"></i></div>
-        AptFix
+        <div class="brand-icon"><i class="fas fa-tools" style="color:#fff;"></i></div>
+        FixIt
     </div>
     <div class="nav-user">
-        <div class="nav-avatar">{{ request.user.username|first|upper }}</div>
-        <span class="nav-username">{{ request.user.username }}</span>
-        <span class="role-pill"><i class="fas fa-briefcase me-1"></i>Manager</span>
-        <a href="{% url 'logout' %}" class="btn-logout ms-2">
-            <i class="fas fa-sign-out-alt me-1"></i>Logout
-        </a>
+        <div class="dropdown">
+            <button class="d-flex align-items-center gap-2 btn btn-link text-white text-decoration-none" 
+                    type="button" data-bs-toggle="dropdown" 
+                    style="background: none; border: none;">
+                <div class="nav-avatar">{{ request.user.username|first|upper }}</div>
+                <span class="nav-username">{{ request.user.username }}</span>
+                <i class="fas fa-chevron-down" style="font-size: 10px; color: rgba(255,255,255,0.6);"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                    <div class="dropdown-item-text">
+                        <div><strong>{{ request.user.username }}</strong></div>
+                        <small class="text-muted">Role: {{ request.user.userprofile.role|title }}</small>
+                        {% if profile.apartment_number %}
+                        <div><small class="text-muted">Apt: {{ profile.apartment_number }}</small></div>
+                        {% endif %}
+                    </div>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="{% url 'profile' %}">
+                    <i class="fas fa-id-card me-2"></i>Edit Profile
+                </a></li>
+                <li><a class="dropdown-item text-danger" href="{% url 'logout' %}">
+                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                </a></li>
+            </ul>
+        </div>
     </div>
 </div>
 
