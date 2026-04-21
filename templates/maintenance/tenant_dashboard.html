@@ -383,30 +383,54 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     // Search and Filter Functions
-    function filterRequests() {
-        let searchTerm = document.getElementById('searchInput').value.toLowerCase();
-        let statusFilter = document.getElementById('statusFilter').value;
-        let priorityFilter = document.getElementById('priorityFilter').value;
-        let rows = document.querySelectorAll('#requestsTable tbody tr');
-        
-        rows.forEach(row => {
-            if (row.querySelector('td')) {
-                let title = row.cells[0].textContent.toLowerCase();
-                let status = row.cells[2].textContent.toLowerCase();
-                let priority = row.cells[1].textContent.toLowerCase();
-                
-                let matchesSearch = title.includes(searchTerm);
-                let matchesStatus = statusFilter === 'all' || status.includes(statusFilter);
-                let matchesPriority = priorityFilter === 'all' || priority.includes(priorityFilter);
-                
-                if (matchesSearch && matchesStatus && matchesPriority) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
+function filterRequests() {
+    let searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    let statusFilter = document.getElementById('statusFilter').value;
+    let priorityFilter = document.getElementById('priorityFilter').value;
+    let rows = document.querySelectorAll('#requestsTable tbody tr');
+    let visibleCount = 0;
+    
+    rows.forEach(row => {
+        if (row.querySelector('td')) {
+            let title = row.cells[0].textContent.toLowerCase();
+            let status = row.cells[2].textContent.toLowerCase();
+            let priority = row.cells[1].textContent.toLowerCase();
+            
+            let matchesSearch = title.includes(searchTerm);
+            let matchesStatus = statusFilter === 'all' || status.includes(statusFilter);
+            let matchesPriority = priorityFilter === 'all' || priority.includes(priorityFilter);
+            
+            if (matchesSearch && matchesStatus && matchesPriority) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
             }
-        });
+        }
+    });
+    
+    // Show/hide no results message
+    let noResultsMsg = document.getElementById('noResultsMessage');
+    if (visibleCount === 0) {
+        if (!noResultsMsg) {
+            let tbody = document.querySelector('#requestsTable tbody');
+            let msgRow = document.createElement('tr');
+            msgRow.id = 'noResultsMessage';
+            msgRow.innerHTML = '<td colspan="4" class="text-center py-5">' +
+                '<div class="empty-state">' +
+                '<i class="fas fa-clipboard-list fa-2x mb-2 opacity-25"></i>' +
+                '<h5 style="color:#6B7280; font-size:15px; font-weight:600;">No requests found</h5>' +
+                '<p style="font-size:13px; color:#9CA3AF;">Try adjusting your search or filter.</p>' +
+                '</div>' +
+                '<\/td>';
+            tbody.appendChild(msgRow);
+        }
+    } else {
+        if (noResultsMsg) {
+            noResultsMsg.remove();
+        }
     }
+}
     
     function applyFilters() {
         filterRequests();
