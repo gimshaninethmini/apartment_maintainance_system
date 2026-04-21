@@ -18,6 +18,10 @@ def register_view(request):
         password2 = request.POST['password2']
         role = request.POST['role']
         apartment_number = request.POST.get('apartment_number', '')
+
+        if role == 'tenant' and not apartment_number:
+            messages.error(request, 'Apartment number is required for tenants')
+            return redirect('register')
         
         if password1 != password2:
             messages.error(request, 'Passwords do not match')
