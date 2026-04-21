@@ -38,6 +38,17 @@
             <p class="text-muted">Login to your account</p>
         </div>
         
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert 
+                {% if message.tags == 'error' %}alert-danger
+                {% elif message.tags == 'success' %}alert-success
+                {% else %}alert-info{% endif %} 
+                mt-3" role="alert">
+                {{ message }}
+            </div>
+            {% endfor %}
+        {% endif %}
         <form method="post">
             {% csrf_token %}
             <div class="mb-3">
