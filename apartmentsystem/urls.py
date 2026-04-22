@@ -23,6 +23,9 @@ urlpatterns = [
     path('request/<int:request_id>/edit/', views.edit_request_view, name='edit_request'),
     path('request/<int:request_id>/cancel/', views.cancel_request_view, name='cancel_request'),
     
+    # Profile URL
+    path('profile/', views.profile_view, name='profile'),
+
     # Manager URLs
     path('manager/assign/<int:request_id>/', views.assign_technician_view, name='assign_technician'),
     path('manager/request/<int:request_id>/', views.manager_request_detail_view, name='manager_request_detail'),
@@ -31,17 +34,9 @@ urlpatterns = [
     path('manager/chart-data/', views.chart_data_view, name='chart_data'),
     
     # Technician URLs
-    # Technician URLs
     path('update/<int:request_id>/', views.update_status_view, name='update_status'),
-<<<<<<< HEAD
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-=======
-    
-    # Profile URL
-    path('profile/', views.profile_view, name='profile'),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
->>>>>>> testing-module
