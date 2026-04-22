@@ -385,7 +385,7 @@
                                 </a>
                                 {% if req.status == 'submitted' or req.status == 'reviewed' %}
                                 <button class="btn btn-outline-secondary btn-sm"
-                                        onclick="openAssignModal({{ request.id }}P, '{{ request.title|escapejs }}')">
+                                    onclick="openAssignModal({{ req.id }}, '{{ req.title|escapejs }}')">
                                     <i class="fas fa-user-plus me-1"></i>Assign
                                 </button>
                                 {% endif %}
