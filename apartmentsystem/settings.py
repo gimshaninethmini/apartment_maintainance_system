@@ -1,3 +1,4 @@
+import os
 """
 Django settings for apartmentsystem project.
 
@@ -126,6 +127,12 @@ STATIC_ROOT = BASE_DIR / 'static_root'
 
 # Media files (User uploaded images)
 MEDIA_URL = '/media/'
+
 MEDIA_ROOT = BASE_DIR / 'media'
 
 LOGIN_URL = '/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'dashboard'
+
