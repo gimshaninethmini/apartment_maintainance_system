@@ -1,283 +1,538 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Manager Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manager Dashboard — AptFix</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F4F6FB; margin: 0; }
+
+        /* ── Navbar ── */
+        .top-navbar {
+            background: #1E1E2E; padding: 0 24px;
+            height: 60px; display: flex; align-items: center;
+            justify-content: space-between; position: sticky; top: 0; z-index: 100;
+        }
+        .nav-brand { display: flex; align-items: center; gap: 10px; color: #fff; font-size: 17px; font-weight: 700; }
+        .nav-brand .brand-icon { width: 34px; height: 34px; background: #7C3AED; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+        .nav-user { display: flex; align-items: center; gap: 10px; }
+        .nav-avatar { width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.12); color: #fff; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+        .nav-username { color: rgba(255,255,255,0.8); font-size: 13px; font-weight: 500; }
+        .role-pill { background: rgba(124,58,237,0.3); color: #C4B5FD; font-size: 11px; font-weight: 600; padding: 2px 10px; border-radius: 20px; }
+
+        /* ── Page ── */
+        .page-content { padding: 24px; }
+
+        /* ── Stat Cards ── */
+        .stat-card {
+            background: #fff; border-radius: 14px; border: 1px solid #E5E7EB;
+            padding: 18px; display: flex; align-items: center; gap: 14px;
+            cursor: pointer; transition: all 0.2s;
+            text-decoration: none; color: inherit;
+        }
+        .stat-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.10); transform: translateY(-2px); color: inherit; text-decoration: none; }
+        .stat-card.active-filter { border-width: 2px; }
+        .stat-icon { width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+        .stat-label { font-size: 11px; font-weight: 600; color: #6B7280; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-value { font-size: 24px; font-weight: 700; color: #111827; line-height: 1.2; }
+
+        .stat-blue   .stat-icon { background:#EFF6FF; color:#3B82F6; }
+        .stat-yellow .stat-icon { background:#FFFBEB; color:#F59E0B; }
+        .stat-indigo .stat-icon { background:#EEF2FF; color:#4F46E5; }
+        .stat-orange .stat-icon { background:#FFF7ED; color:#EA580C; }
+        .stat-purple .stat-icon { background:#F5F3FF; color:#7C3AED; }
+        .stat-green  .stat-icon { background:#F0FDF4; color:#16A34A; }
+        .stat-blue.active-filter   { border-color:#3B82F6; }
+        .stat-yellow.active-filter { border-color:#F59E0B; }
+        .stat-indigo.active-filter { border-color:#4F46E5; }
+        .stat-orange.active-filter { border-color:#EA580C; }
+        .stat-purple.active-filter { border-color:#7C3AED; }
+        .stat-green.active-filter  { border-color:#16A34A; }
+
+        /* ── Cards ── */
+        .apt-card { background:#fff; border-radius:14px; border:1px solid #E5E7EB; box-shadow:0 1px 4px rgba(0,0,0,0.06); }
+        .card-header-apt { padding:14px 20px; border-bottom:1px solid #E5E7EB; display:flex; align-items:center; justify-content:space-between; font-weight:600; font-size:14px; }
+
+        /* ── Table ── */
+        .apt-table { width:100%; border-collapse:collapse; font-size:13.5px; }
+        .apt-table thead th { background:#F9FAFB; color:#6B7280; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; padding:10px 16px; border-bottom:1px solid #E5E7EB; white-space:nowrap; }
+        .apt-table tbody td { padding:13px 16px; border-bottom:1px solid #F3F4F6; vertical-align:middle; }
+        .apt-table tbody tr:hover { background:#F9FAFB; }
+        .apt-table tbody tr:last-child td { border-bottom:none; }
+
+        /* ── Badges ── */
+        .status-badge { display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:20px; font-size:11.5px; font-weight:600; }
+        .status-submitted   { background:#F3F4F6; color:#374151; }
+        .status-reviewed    { background:#EFF6FF; color:#1D4ED8; }
+        .status-assigned    { background:#FFFBEB; color:#B45309; }
+        .status-in_progress { background:#EDE9FE; color:#6D28D9; }
+        .status-completed   { background:#F0FDF4; color:#15803D; }
+        .status-cancelled   { background:#FEF2F2; color:#B91C1C; }
+
+        .priority-badge { display:inline-flex; align-items:center; padding:3px 9px; border-radius:20px; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.4px; }
+        .priority-low       { background:#F0FDF4; color:#15803D; }
+        .priority-medium    { background:#FFFBEB; color:#B45309; }
+        .priority-high      { background:#FFF7ED; color:#C2410C; }
+        .priority-emergency { background:#FEF2F2; color:#B91C1C; }
+
+        /* ── Forms ── */
+        .form-control, .form-select { font-size:13.5px; border-radius:8px; border:1px solid #E5E7EB; padding:8px 12px; font-family: 'Plus Jakarta Sans', sans-serif; }
+        .form-control:focus, .form-select:focus { border-color:#7C3AED; box-shadow:0 0 0 3px rgba(124,58,237,0.10); outline:none; }
+        .form-label { font-size:13px; font-weight:600; margin-bottom:5px; display:block; }
+
+        /* ── Buttons ── */
+        .btn { font-size:13px; font-weight:500; border-radius:8px; font-family: 'Plus Jakarta Sans', sans-serif; }
+        .btn-primary { background:#7C3AED; border-color:#7C3AED; color:#fff; }
+        .btn-primary:hover { background:#6D28D9; border-color:#6D28D9; color:#fff; }
+        .btn-logout { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color:#fff; font-size:13px; border-radius:8px; padding:6px 14px; text-decoration:none; transition:all 0.2s; }
+        .btn-logout:hover { background: rgba(255,255,255,0.2); color:#fff; }
+
+        /* ── Toast ── */
+        .toast-container { position:fixed; top:20px; right:20px; z-index:9999; display:flex; flex-direction:column; gap:10px; }
+        .toast-alert { display:flex; align-items:center; gap:12px; background:#fff; border-radius:10px; padding:12px 16px; box-shadow:0 4px 20px rgba(0,0,0,0.12); min-width:280px; border-left:4px solid; font-size:13.5px; font-weight:500; animation:slideIn 0.3s ease; }
+        .toast-success { border-color:#16A34A; } .toast-success .toast-icon { color:#16A34A; }
+        .toast-error   { border-color:#DC2626; } .toast-error   .toast-icon { color:#DC2626; }
+        .toast-info    { border-color:#3B82F6; } .toast-info    .toast-icon { color:#3B82F6; }
+        .toast-close { background:none; border:none; color:#9CA3AF; cursor:pointer; margin-left:auto; font-size:12px; }
+        @keyframes slideIn { from{opacity:0;transform:translateX(40px);} to{opacity:1;transform:translateX(0);} }
+
+        /* ── Pagination ── */
+        .page-link { font-size:13px; color:#374151; border-color:#E5E7EB; border-radius:8px !important; margin:0 2px; }
+        .page-item.active .page-link { background:#7C3AED; border-color:#7C3AED; }
+
+        /* ── Dropdown Menu Styling ── */
+        .dropdown-menu {
+            border-radius: 12px !important;
+            border: 1px solid #E5E7EB !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important;
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
+            padding: 8px 0 !important;
+        }
+        .dropdown-item {
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
+            font-size: 13px !important;
+            font-weight: 500 !important;
+            padding: 10px 20px !important;
+            color: #374151 !important;
+            transition: all 0.2s ease !important;
+        }
+        .dropdown-item i {
+            width: 20px;
+            color: #9CA3AF;
+            font-size: 14px;
+        }
+        .dropdown-item:hover {
+            background: #F3F4F6 !important;
+            color: #111827 !important;
+        }
+        .dropdown-item:hover i {
+            color: #7C3AED !important;
+        }
+        .dropdown-item.text-danger {
+            color: #DC2626 !important;
+        }
+        .dropdown-item.text-danger:hover {
+            background: #FEF2F2 !important;
+            color: #B91C1C !important;
+        }
+        .dropdown-item.text-danger:hover i {
+            color: #DC2626 !important;
+        }
+        .dropdown-divider {
+            margin: 8px 0 !important;
+            border-color: #E5E7EB !important;
+        }
+
+        /* ── Empty State ── */
+        .empty-state { text-align:center; padding:60px 20px; color:#9CA3AF; }
+        .empty-state i { font-size:48px; margin-bottom:16px; opacity:0.35; display:block; }
+        .empty-state h5 { color:#6B7280; font-size:15px; font-weight:600; }
+    </style>
 </head>
 <body>
-    <nav class="navbar navbar-dark bg-dark">
-        <div class="container">
-            <span class="navbar-brand">
-                <i class="fas fa-building"></i> Manager Dashboard
-            </span>
-            <div>
-                <a href="{% url 'logout' %}" class="btn btn-outline-light">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </a>
-            </div>
-        </div>
-    </nav>
-    
-    <!-- Statistics Cards -->
-    <div class="container mt-4">
-        <div class="row">
-            <div class="col-md-3">
-                <div class="card text-white bg-primary mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title">Total Requests</h5>
-                        <h2 class="display-4">{{ total_requests }}</h2>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-white bg-warning mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title">Pending</h5>
-                        <h2 class="display-4">{{ pending_count }}</h2>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-white bg-info mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title">Assigned</h5>
-                        <h2 class="display-4">{{ assigned_count }}</h2>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-white bg-success mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title">Completed</h5>
-                        <h2 class="display-4">{{ completed_count }}</h2>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
- <!---- CHART SECTION  -->
-    <div class="container mt-4">
-      <div class="card shadow">
-            <div class="card-header bg-info text-white">
-                <h5 class="mb-0"><i class="fas fa-chart-bar"></i> Request Statistics</h5>
-            </div>
-            <div class="card-body">
-                <canvas id="requestsChart" height="100"></canvas>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Search and Filter Section -->
-    <div class="container mt-3">
-        <div class="row">
-            <div class="col-md-4">
-                <input type="text" id="searchInput" class="form-control" placeholder="🔍 Search by title or tenant...">
-            </div>
-            <div class="col-md-3">
-                <select id="statusFilter" class="form-control">
-                    <option value="all">All Status</option>
-                    <option value="submitted">Submitted</option>
-                    <option value="assigned">Assigned</option>
-                    <option value="in_progress">In Progress</option>
-                    <option value="completed">Completed</option>
-                </select>
-            </div>
-            <div class="col-md-3">
-                <select id="priorityFilter" class="form-control">
-                    <option value="all">All Priority</option>
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
-                    <option value="emergency">Emergency</option>
-                </select>
-            </div>
-            <div class="col-md-2">
-                <a href="{% url 'export_requests' %}" class="btn btn-success w-100">
-                    <i class="fas fa-download"></i> Export CSV
-                </a>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Requests Table -->
-    <div class="container mt-4">
-        <div class="card shadow">
-            <div class="card-header bg-primary text-white">
-                <h4 class="mb-0"><i class="fas fa-list"></i> All Maintenance Requests</h4>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover" id="requestsTable">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>ID</th>
-                                <th>Title</th>
-                                <th>Tenant</th>
-                                <th>Apartment</th>
-                                <th>Priority</th>
-                                <th>Status</th>
-                                <th>Submitted</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for request in requests %}
-                            <tr>
-                                <td>#{{ request.id }}</td>
-                                <td>
-                                    <a href="{% url 'manager_request_detail' request.id %}" class="text-decoration-none">
-                                        {{ request.title|truncatechars:40 }}
-                                    </a>
-                                </td>
-                                <td>{{ request.tenant.username }}</td>
-                                <td>{{ request.tenant.userprofile.apartment_number|default:"N/A" }}</td>
-                                <td>
-                                    {% if request.priority == 'emergency' %}
-                                        <span class="badge bg-danger">🚨 EMERGENCY</span>
-                                    {% elif request.priority == 'high' %}
-                                        <span class="badge bg-danger">HIGH</span>
-                                    {% elif request.priority == 'medium' %}
-                                        <span class="badge bg-warning text-dark">MEDIUM</span>
-                                    {% else %}
-                                        <span class="badge bg-info">LOW</span>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if request.status == 'completed' %}
-                                        <span class="badge bg-success">✅ COMPLETED</span>
-                                    {% elif request.status == 'in_progress' %}
-                                        <span class="badge bg-primary">⚙️ IN PROGRESS</span>
-                                    {% elif request.status == 'assigned' %}
-                                        <span class="badge bg-info">👨‍🔧 ASSIGNED</span>
-                                    {% elif request.status == 'submitted' %}
-                                        <span class="badge bg-secondary">📋 SUBMITTED</span>
-                                    {% endif %}
-                                </td>
-                                <td>{{ request.created_at|date:"M d, Y" }}</td>
-                                <td>
-                                    {% if request.status == 'submitted' or request.status == 'reviewed' %}
-                                    <form method="post" action="{% url 'assign_technician' request.id %}" class="d-flex gap-1">
-                                        {% csrf_token %}
-                                        <select name="technician_id" class="form-select form-select-sm" style="width:100px" required>
-                                            <option value="">Select Tech</option>
-                                            {% for tech in technicians %}
-                                            <option value="{{ tech.id }}">{{ tech.username }}</option>
-                                            {% endfor %}
-                                        </select>
-                                        <button type="submit" class="btn btn-sm btn-success">
-                                            <i class="fas fa-user-plus"></i> Assign
-                                        </button>
-                                    </form>
-                                    {% else %}
-                                    <span class="text-muted">Assigned to {{ request.assignment.technician.username|default:"someone" }}</span>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="8" class="text-center py-4">
-                                    <i class="fas fa-inbox fa-2x text-muted"></i>
-                                    <p class="mt-2">No maintenance requests yet</p>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Pagination -->
-    {% if requests.has_other_pages %}
-    <div class="container mt-3">
-        <nav aria-label="Page navigation">
-            <ul class="pagination justify-content-center">
-                {% if requests.has_previous %}
-                    <li class="page-item"><a class="page-link" href="?page={{ requests.previous_page_number }}">Previous</a></li>
-                {% else %}
-                    <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
-                {% endif %}
-                
-                {% for num in requests.paginator.page_range %}
-                    {% if requests.number == num %}
-                        <li class="page-item active"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
-                    {% else %}
-                        <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
-                    {% endif %}
-                {% endfor %}
-                
-                {% if requests.has_next %}
-                    <li class="page-item"><a class="page-link" href="?page={{ requests.next_page_number }}">Next</a></li>
-                {% else %}
-                    <li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
-                {% endif %}
-            </ul>
-        </nav>
-    </div>
-    {% endif %}
-    
-    <script>
-        // Search and Filter Functionality
-        function filterRequests() {
-            let searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            let statusFilter = document.getElementById('statusFilter').value;
-            let priorityFilter = document.getElementById('priorityFilter').value;
-            let rows = document.querySelectorAll('#requestsTable tbody tr');
-            
-            rows.forEach(row => {
-                let title = row.cells[1].textContent.toLowerCase();
-                let tenant = row.cells[2].textContent.toLowerCase();
-                let status = row.cells[5].textContent.toLowerCase();
-                let priority = row.cells[4].textContent.toLowerCase();
-                
-                let matchesSearch = title.includes(searchTerm) || tenant.includes(searchTerm);
-                let matchesStatus = statusFilter === 'all' || status.includes(statusFilter);
-                let matchesPriority = priorityFilter === 'all' || priority.includes(priorityFilter);
-                
-                if (matchesSearch && matchesStatus && matchesPriority) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        }
-        
-        document.getElementById('searchInput').addEventListener('keyup', filterRequests);
-        document.getElementById('statusFilter').addEventListener('change', filterRequests);
-        document.getElementById('priorityFilter').addEventListener('change', filterRequests);
-    </script>
 
-    <script>
-        // Get data from Django template variables
-        const pendingCount = parseInt("{{ pending_count|default:'0' }}");
-        const assignedCount = parseInt("{{ assigned_count|default:'0' }}");
-        const inProgressCount = parseInt("{{ in_progress_count|default:'0' }}");
-        const completedCount = parseInt("{{ completed_count|default:'0' }}");
-    
-        const ctx = document.getElementById('requestsChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['Submitted', 'Assigned', 'In Progress', 'Completed'],
-                datasets: [{
-                    label: 'Number of Requests',
-                    data: [pendingCount, assignedCount, inProgressCount, completedCount],
-                    backgroundColor: ['#6c757d', '#17a2b8', '#007bff', '#28a745']
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: { stepSize: 1 }
+<!-- ── Navbar ── -->
+<div class="top-navbar">
+    <div class="nav-brand">
+        <div class="brand-icon"><i class="fas fa-tools" style="color:#fff;"></i></div>
+        FixIt
+    </div>
+    <div class="nav-user">
+        <div class="dropdown">
+            <button class="d-flex align-items-center gap-2 btn btn-link text-white text-decoration-none" 
+                    type="button" data-bs-toggle="dropdown" 
+                    style="background: none; border: none;">
+                <div class="nav-avatar">{{ request.user.username|first|upper }}</div>
+                <span class="nav-username">{{ request.user.username }}</span>
+                <i class="fas fa-chevron-down" style="font-size: 10px; color: rgba(255,255,255,0.6);"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                    <div class="dropdown-item-text">
+                        <div><strong>{{ request.user.username }}</strong></div>
+                        <small class="text-muted">Role: {{ request.user.userprofile.role|title }}</small>
+                        {% if profile.apartment_number %}
+                        <div><small class="text-muted">Apt: {{ profile.apartment_number }}</small></div>
+                        {% endif %}
+                    </div>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="{% url 'profile' %}">
+                    <i class="fas fa-id-card me-2"></i>Edit Profile
+                </a></li>
+                <li><a class="dropdown-item text-danger" href="{% url 'logout' %}">
+                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                </a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- ── Toast Notifications ── -->
+{% if messages %}
+<div class="toast-container">
+    {% for message in messages %}
+    <div class="toast-alert toast-{{ message.tags }}">
+        <div class="toast-icon">
+            {% if message.tags == 'success' %}<i class="fas fa-check-circle"></i>
+            {% elif message.tags == 'error' %}<i class="fas fa-exclamation-circle"></i>
+            {% else %}<i class="fas fa-info-circle"></i>{% endif %}
+        </div>
+        <span>{{ message }}</span>
+        <button class="toast-close" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="page-content">
+
+    <!-- ── Page Header ── -->
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h4 style="font-weight:700;margin:0;font-size:20px;">Manager Dashboard</h4>
+            <p style="color:#6B7280;font-size:13px;margin:0;">Welcome back, {{ request.user.username }}</p>
+        </div>
+        <a href="{% url 'export_requests_csv' %}{% if status_filter %}?status={{ status_filter }}{% endif %}"
+           class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-file-csv me-1"></i>Export CSV
+        </a>
+    </div>
+
+    <!-- ── Stat Cards — click to filter ── -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-4 col-lg-2">
+            <a href="?status=" class="stat-card stat-blue {% if not status_filter %}active-filter{% endif %}">
+                <div class="stat-icon"><i class="fas fa-list-alt"></i></div>
+                <div><div class="stat-label">Total</div><div class="stat-value">{{ total_count }}</div></div>
+            </a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2">
+            <a href="?status=submitted" class="stat-card stat-yellow {% if status_filter == 'submitted' %}active-filter{% endif %}">
+                <div class="stat-icon"><i class="fas fa-inbox"></i></div>
+                <div><div class="stat-label">Pending</div><div class="stat-value">{{ pending_count }}</div></div>
+            </a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2">
+            <a href="?status=reviewed" class="stat-card stat-indigo {% if status_filter == 'reviewed' %}active-filter{% endif %}">
+                <div class="stat-icon"><i class="fas fa-search"></i></div>
+                <div><div class="stat-label">Reviewed</div><div class="stat-value">{{ reviewed_count }}</div></div>
+            </a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2">
+            <a href="?status=assigned" class="stat-card stat-orange {% if status_filter == 'assigned' %}active-filter{% endif %}">
+                <div class="stat-icon"><i class="fas fa-user-check"></i></div>
+                <div><div class="stat-label">Assigned</div><div class="stat-value">{{ assigned_count }}</div></div>
+            </a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2">
+            <a href="?status=in_progress" class="stat-card stat-purple {% if status_filter == 'in_progress' %}active-filter{% endif %}">
+                <div class="stat-icon"><i class="fas fa-tools"></i></div>
+                <div><div class="stat-label">In Progress</div><div class="stat-value">{{ in_progress_count }}</div></div>
+            </a>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2">
+            <a href="?status=completed" class="stat-card stat-green {% if status_filter == 'completed' %}active-filter{% endif %}">
+                <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                <div><div class="stat-label">Completed</div><div class="stat-value">{{ completed_count }}</div></div>
+            </a>
+        </div>
+    </div>
+
+    <!-- ── Chart + Search Row ── -->
+    <div class="row g-3 mb-4">
+
+        <!-- Chart -->
+        <div class="col-md-4">
+            <div class="apt-card h-100">
+                <div class="card-header-apt">
+                    <span><i class="fas fa-chart-pie me-2 text-muted"></i>Status Overview</span>
+                </div>
+                <div class="p-3 d-flex align-items-center justify-content-center" style="min-height:220px;">
+                    <canvas id="statusChart" style="max-height:200px;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search & Filter -->
+        <div class="col-md-8">
+            <div class="apt-card h-100">
+                <div class="card-header-apt">
+                    <span><i class="fas fa-filter me-2 text-muted"></i>Search & Filter</span>
+                </div>
+                <div class="p-3">
+                    <form method="get" action="{% url 'dashboard' %}">
+                        <div class="row g-2">
+                            <div class="col-12">
+                                <div class="input-group">
+                                    <span class="input-group-text" style="background:#F9FAFB;border-color:#E5E7EB;">
+                                        <i class="fas fa-search" style="color:#9CA3AF;font-size:12px;"></i>
+                                    </span>
+                                    <input type="text" name="search" class="form-control"
+                                           placeholder="Search by title, description or tenant..."
+                                           value="{{ search }}">
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <select name="status" class="form-select">
+                                    <option value="">All Statuses</option>
+                                    <option value="submitted"   {% if status_filter == 'submitted'   %}selected{% endif %}>Submitted</option>
+                                    <option value="reviewed"    {% if status_filter == 'reviewed'    %}selected{% endif %}>Reviewed</option>
+                                    <option value="assigned"    {% if status_filter == 'assigned'    %}selected{% endif %}>Assigned</option>
+                                    <option value="in_progress" {% if status_filter == 'in_progress' %}selected{% endif %}>In Progress</option>
+                                    <option value="completed"   {% if status_filter == 'completed'   %}selected{% endif %}>Completed</option>
+                                    <option value="cancelled"   {% if status_filter == 'cancelled'   %}selected{% endif %}>Cancelled</option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <select name="priority" class="form-select">
+                                    <option value="">All Priorities</option>
+                                    <option value="emergency" {% if priority_filter == 'emergency' %}selected{% endif %}>Emergency</option>
+                                    <option value="high"      {% if priority_filter == 'high'      %}selected{% endif %}>High</option>
+                                    <option value="medium"    {% if priority_filter == 'medium'    %}selected{% endif %}>Medium</option>
+                                    <option value="low"       {% if priority_filter == 'low'       %}selected{% endif %}>Low</option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-search me-1"></i>Apply Filters
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary w-100">
+                                    <i class="fas fa-times me-1"></i>Clear
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Requests Table ── -->
+    <div class="apt-card">
+        <div class="card-header-apt">
+            <span>
+                <i class="fas fa-clipboard-list me-2 text-muted"></i>
+                Maintenance Requests
+                {% if status_filter %}
+                — <span style="color:#7C3AED;font-weight:700;">{{ status_filter|title }}</span>
+                {% endif %}
+            </span>
+            <span style="font-size:12px;color:#9CA3AF;font-weight:400;">
+                {{ requests.paginator.count }} request{{ requests.paginator.count|pluralize }}
+            </span>
+        </div>
+
+        {% if requests %}
+        <div style="overflow-x:auto;">
+            <table class="apt-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Title</th>
+                        <th>Tenant</th>
+                        <th>Apt</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for req in requests %}
+                    <tr>
+                        <td style="color:#9CA3AF;font-size:12px;">#{{ req.id }}</td>
+                        <td>
+                            <div style="font-weight:600;">{{ req.title }}</div>
+                            <div style="font-size:12px;color:#9CA3AF;">{{ req.description|truncatechars:45 }}</div>
+                        </td>
+                        <td style="font-weight:500;">{{ req.tenant.username }}</td>
+                        <td style="color:#6B7280;">{{ req.tenant.userprofile.apartment_number|default:"—" }}</td>
+                        <td><span class="priority-badge priority-{{ req.priority }}">{{ req.priority }}</span></td>
+                        <td><span class="status-badge status-{{ req.status }}">{{ req.get_status_display }}</span></td>
+                        <td style="font-size:12px;color:#6B7280;">{{ req.created_at|date:"M d, Y" }}</td>
+                        <td>
+                            <div class="d-flex gap-1 flex-wrap">
+                                <a href="{% url 'manager_request_detail' req.id %}"
+                                   class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-eye me-1"></i>View
+                                </a>
+                                {% if req.status == 'submitted' or req.status == 'reviewed' %}
+                                <button class="btn btn-outline-secondary btn-sm"
+                                    onclick="openAssignModal({{ req.id }}, '{{ req.title|escapejs }}')">
+                                    <i class="fas fa-user-plus me-1"></i>Assign
+                                </button>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination — carries filters forward -->
+        {% if requests.has_other_pages %}
+        <div class="p-3 border-top d-flex justify-content-center">
+            <nav><ul class="pagination pagination-sm mb-0">
+                {% if requests.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ requests.previous_page_number }}&status={{ status_filter }}&search={{ search }}&priority={{ priority_filter }}">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                </li>
+                {% endif %}
+                {% for num in requests.paginator.page_range %}
+                <li class="page-item {% if requests.number == num %}active{% endif %}">
+                    <a class="page-link" href="?page={{ num }}&status={{ status_filter }}&search={{ search }}&priority={{ priority_filter }}">{{ num }}</a>
+                </li>
+                {% endfor %}
+                {% if requests.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ requests.next_page_number }}&status={{ status_filter }}&search={{ search }}&priority={{ priority_filter }}">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+                {% endif %}
+            </ul></nav>
+        </div>
+        {% endif %}
+
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-clipboard-list"></i>
+            <h5>No requests found</h5>
+            <p style="font-size:13px;">Try adjusting your search or filter.</p>
+        </div>
+        {% endif %}
+    </div>
+
+</div><!-- end page-content -->
+
+<!-- ── Assign Technician Modal ── -->
+<div class="modal fade" id="assignModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius:14px;border:1px solid #E5E7EB;">
+            <div class="modal-header" style="border-bottom:1px solid #E5E7EB;">
+                <h5 class="modal-title" style="font-size:15px;font-weight:600;">
+                    <i class="fas fa-user-plus me-2 text-muted"></i>Assign Technician
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" id="assignForm" action="">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <p id="assignRequestTitle" style="font-size:13px;color:#6B7280;margin-bottom:16px;"></p>
+                    <div class="mb-3">
+                        <label class="form-label">Select Technician</label>
+                        <select name="technician_id" class="form-select" required>
+                            <option value="">— Choose a technician —</option>
+                            {% for tech in technicians %}
+                            <option value="{{ tech.id }}">
+                                {{ tech.username }} ({{ tech.active_tasks }} active task{{ tech.active_tasks|pluralize }})
+                            </option>
+                            {% empty %}
+                            <option disabled>No technicians registered yet</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-1">
+                        <label class="form-label">Notes <span style="color:#9CA3AF;font-weight:400;">(optional)</span></label>
+                        <textarea name="notes" class="form-control" rows="2" placeholder="Any specific instructions..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer" style="border-top:1px solid #E5E7EB;">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        <i class="fas fa-check me-1"></i>Assign
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+    // ── Assign modal ──
+    function openAssignModal(requestId, requestTitle) {
+        document.getElementById('assignForm').action = '/manager/assign/' + requestId + '/';
+        document.getElementById('assignRequestTitle').textContent = 'Request: ' + requestTitle;
+        new bootstrap.Modal(document.getElementById('assignModal')).show();
+    }
+
+    // ── Chart — real data from backend ──
+    document.addEventListener('DOMContentLoaded', function () {
+        fetch("{% url 'chart_data' %}")
+            .then(r => r.json())
+            .then(data => {
+                new Chart(document.getElementById('statusChart').getContext('2d'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: data.labels,
+                        datasets: [{
+                            data: data.values,
+                            backgroundColor: data.colors,
+                            borderWidth: 2,
+                            borderColor: '#fff',
+                            hoverOffset: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        cutout: '65%',
+                        plugins: {
+                            legend: { position: 'bottom', labels: { font: { size: 11 }, boxWidth: 10, padding: 8 } },
+                            tooltip: { callbacks: { label: ctx => ' ' + ctx.label + ': ' + ctx.raw } }
+                        }
                     }
-                }
-            }
+                });
+            })
+            .catch(() => {
+                document.getElementById('statusChart').parentElement.innerHTML =
+                    '<p style="font-size:12px;color:#9CA3AF;text-align:center;">Chart unavailable</p>';
+            });
+
+        // Auto-dismiss toasts after 4 seconds
+        document.querySelectorAll('.toast-alert').forEach(t => {
+            setTimeout(() => {
+                t.style.opacity = '0';
+                t.style.transform = 'translateX(100%)';
+                t.style.transition = 'all 0.4s';
+                setTimeout(() => t.remove(), 400);
+            }, 4000);
         });
-    </script>
+    });
+</script>
+
 </body>
 </html>
