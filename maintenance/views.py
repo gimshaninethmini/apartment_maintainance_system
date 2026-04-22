@@ -31,6 +31,16 @@ def register_view(request):
             messages.error(request, 'Username already exists')
             return redirect('register')
         
+        # Check password length (minimum 6 characters)
+        if len(password1) < 6:
+            messages.error(request, '❌ Password must be at least 6 characters long.')
+            return redirect('register')
+        
+        # Check if username exists
+        if User.objects.filter(username=username).exists():
+            messages.error(request, '❌ Username already exists. Please choose a different username.')
+            return redirect('register')
+
         user = User.objects.create_user(username=username, password=password1)
         profile = user.userprofile
         profile.role = role
