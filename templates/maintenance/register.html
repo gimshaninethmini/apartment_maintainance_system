@@ -35,9 +35,10 @@
                                     <option value="technician">Technician</option>
                                 </select>
                             </div>
-                            <div class="mb-3">
-                                <label>Apartment Number (if Tenant)</label>
-                                <input type="text" name="apartment_number" class="form-control">
+                            <div class="mb-3" id="apartmentField">
+                                <label>Apartment Number <span class="text-danger" id="aptRequired">*</span></label>
+                                <input type="text" name="apartment_number" id="apartment_number" class="form-control">
+                                <small class="text-muted" id="aptHint">Required for tenants</small>
                             </div>
                             <button type="submit" class="btn btn-primary w-100">Register</button>
                         </form>
@@ -49,5 +50,28 @@
             </div>
         </div>
     </div>
+<script>
+    // Make apartment number required only for tenants
+    const roleSelect = document.querySelector('select[name="role"]');
+    const aptInput = document.getElementById('apartment_number');
+    const aptRequired = document.getElementById('aptRequired');
+    const aptHint = document.getElementById('aptHint');
+    
+    function toggleApartmentRequired() {
+        if (roleSelect.value === 'tenant') {
+            aptInput.required = true;
+            aptRequired.style.display = 'inline';
+            aptHint.style.display = 'block';
+            aptHint.style.color = '#6c757d';
+        } else {
+            aptInput.required = false;
+            aptRequired.style.display = 'none';
+            aptHint.style.display = 'none';
+        }
+    }
+    
+    roleSelect.addEventListener('change', toggleApartmentRequired);
+    toggleApartmentRequired(); // Run on page load
+</script>
 </body>
 </html>

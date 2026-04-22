@@ -25,6 +25,8 @@
         .nav-username { color: rgba(255,255,255,0.8); font-size: 13px; font-weight: 500; }
         .role-pill { background: rgba(124,58,237,0.3); color: #C4B5FD; font-size: 11px; font-weight: 600; padding: 2px 10px; border-radius: 20px; }
 
+
+
         /* ── Dropdown Menu Styling ── */
         .dropdown-menu {
             border-radius: 12px !important;
@@ -230,6 +232,23 @@
             </div>
         </div>
     </div>
+
+    <!-- ── Toast Notifications ── -->
+    {% if messages %}
+    <div class="toast-container">
+        {% for message in messages %}
+        <div class="toast-alert toast-{{ message.tags }}">
+            <div class="toast-icon">
+                {% if message.tags == 'success' %}<i class="fas fa-check-circle"></i>
+                {% elif message.tags == 'error' %}<i class="fas fa-exclamation-circle"></i>
+                {% else %}<i class="fas fa-info-circle"></i>{% endif %}
+            </div>
+            <span>{{ message }}</span>
+            <button class="toast-close" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
     
     <!-- ===== MAIN CONTENT AREA ===== -->
     <div class="page-content">
