@@ -48,13 +48,13 @@
             background: white;
             border-radius: 12px;
             padding: 35px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-            border: 1px solid #e0e0e0;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            border: 15px solid #d0d0d0;
         }
 
         .login-header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 35px;
         }
 
         .login-header h2 {
@@ -73,24 +73,27 @@
             font-size: 14px;
         }
 
-        /* Input group with icon */
+        /* Input group - label ABOVE field */
         .input-group {
-            margin-bottom: 20px;
-            position: relative;
+            margin-bottom: 25px;
+            display: block;
         }
 
         .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
+            display: block !important;
+            margin-bottom: 10px !important;
+            font-weight: 600;
             color: #333;
             font-size: 14px;
+            width: 100%;
+            clear: both;
         }
 
         .input-wrapper {
             position: relative;
             display: flex;
             align-items: center;
+            width: 100%;
         }
 
         .input-icon {
@@ -98,16 +101,18 @@
             left: 15px;
             color: #999;
             font-size: 16px;
+            z-index: 2;
         }
 
         .input-wrapper input {
             width: 100%;
             padding: 14px 15px 14px 45px;
-            border: 1px solid #e0e0e0;
+            border: 2px solid #d0d0d0;
             border-radius: 30px;
             font-size: 14px;
             transition: all 0.3s;
             background: #f8f9fa;
+            display: block;
         }
 
         .input-wrapper input:focus {
@@ -123,6 +128,7 @@
             cursor: pointer;
             color: #999;
             font-size: 16px;
+            z-index: 2;
         }
 
         .password-toggle:hover {
@@ -132,7 +138,7 @@
         .btn-login {
             width: 100%;
             padding: 14px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #1a365d;
             border: none;
             border-radius: 30px;
             color: white;
@@ -206,7 +212,7 @@
             <form method="post">
                 {% csrf_token %}
                 
-                <!-- Username field with person icon -->
+                <!-- Username field - label ABOVE -->
                 <div class="input-group">
                     <label for="username">Username</label>
                     <div class="input-wrapper">
@@ -215,7 +221,7 @@
                     </div>
                 </div>
 
-                <!-- Password field with lock and eye icon -->
+                <!-- Password field - label ABOVE -->
                 <div class="input-group">
                     <label for="password">Password</label>
                     <div class="input-wrapper">
