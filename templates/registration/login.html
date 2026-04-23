@@ -212,13 +212,18 @@
             </div>
 
             <!-- Display error/success messages -->
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}success{% endif %}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endif %}
+           {% if messages %}
+               {% for message in messages %}
+                   <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}success{% endif %}">
+                      {% if message.tags == 'error' %}
+                         <i class="fas fa-times-circle me-2"></i>
+                      {% else %}
+                         <i class="fas fa-check-circle me-2"></i>
+                      {% endif %}
+                      {{ message }}
+                   </div>
+               {% endfor %}
+           {% endif %}
 
             <form method="post">
                 {% csrf_token %}
