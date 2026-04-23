@@ -33,12 +33,7 @@ def register_view(request):
         
         # Check password length (minimum 6 characters)
         if len(password1) < 6:
-            messages.error(request, '❌ Password must be at least 6 characters long.')
-            return redirect('register')
-        
-        # Check if username exists
-        if User.objects.filter(username=username).exists():
-            messages.error(request, '❌ Username already exists. Please choose a different username.')
+            messages.error(request, 'Password must be at least 6 characters long.')
             return redirect('register')
 
         user = User.objects.create_user(username=username, password=password1)
@@ -113,7 +108,7 @@ def dashboard_view(request):
     
        total_count = requests.count()
        pending_count = requests.filter(status='submitted').count()
-       assigned_count = requests.filter(status='pending').count()
+       assigned_count = requests.filter(status='assigned').count()
        in_progress_count = requests.filter(status='in_progress').count()
        completed_count = requests.filter(status='completed').count()
     
