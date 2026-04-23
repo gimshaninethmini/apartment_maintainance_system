@@ -40,15 +40,16 @@
             position: relative;
             z-index: 1;
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
             padding: 20px;
         }
 
         .login-box {
             background: white;
-            border-radius: 8px;
-            padding: 40px;
+            border-radius: 12px;
+            padding: 35px;
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            border: 1px solid #e0e0e0;
         }
 
         .login-header {
@@ -57,19 +58,25 @@
         }
 
         .login-header h2 {
-            font-size: 24px;
-            font-weight: 600;
+            font-size: 28px;
+            font-weight: 700;
             color: #333;
             margin-bottom: 5px;
         }
 
+        .login-header h2 span {
+            color: #667eea;
+        }
+
         .login-header p {
-            color: #666;
+            color: #888;
             font-size: 14px;
         }
 
+        /* Input group with icon */
         .input-group {
             margin-bottom: 20px;
+            position: relative;
         }
 
         .input-group label {
@@ -80,31 +87,60 @@
             font-size: 14px;
         }
 
-        .input-group input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-            transition: border-color 0.3s;
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
         }
 
-        .input-group input:focus {
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            color: #999;
+            font-size: 16px;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 14px 15px 14px 45px;
+            border: 1px solid #e0e0e0;
+            border-radius: 30px;
+            font-size: 14px;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+
+        .input-wrapper input:focus {
             outline: none;
             border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            cursor: pointer;
+            color: #999;
+            font-size: 16px;
+        }
+
+        .password-toggle:hover {
+            color: #667eea;
         }
 
         .btn-login {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
-            border-radius: 5px;
+            border-radius: 30px;
             color: white;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
             transition: transform 0.2s, opacity 0.2s;
+            margin-top: 10px;
         }
 
         .btn-login:hover {
@@ -114,13 +150,15 @@
 
         .register-link {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 25px;
             font-size: 14px;
+            color: #666;
         }
 
         .register-link a {
             color: #667eea;
             text-decoration: none;
+            font-weight: 500;
         }
 
         .register-link a:hover {
@@ -129,8 +167,8 @@
 
         /* Alert messages */
         .alert {
-            padding: 12px;
-            border-radius: 5px;
+            padding: 12px 15px;
+            border-radius: 10px;
             margin-bottom: 20px;
             font-size: 14px;
         }
@@ -152,7 +190,7 @@
     <div class="login-container">
         <div class="login-box">
             <div class="login-header">
-                <h2>Apartment Maintenance System</h2>
+                <h2>FixIt <span>Apartment Maintenance</span></h2>
                 <p>Login to your account</p>
             </div>
 
@@ -167,14 +205,26 @@
 
             <form method="post">
                 {% csrf_token %}
+                
+                <!-- Username field with person icon -->
                 <div class="input-group">
                     <label for="username">Username</label>
-                    <input type="text" name="username" id="username" placeholder="Enter your username" required>
+                    <div class="input-wrapper">
+                        <i class="fas fa-user input-icon"></i>
+                        <input type="text" name="username" id="username" placeholder="Enter your username" required>
+                    </div>
                 </div>
+
+                <!-- Password field with lock and eye icon -->
                 <div class="input-group">
                     <label for="password">Password</label>
-                    <input type="password" name="password" id="password" placeholder="Enter your password" required>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" name="password" id="password" placeholder="Enter your password" required>
+                        <i class="fas fa-eye password-toggle" id="togglePassword"></i>
+                    </div>
                 </div>
+
                 <button type="submit" class="btn-login">Login</button>
             </form>
 
@@ -183,5 +233,18 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // Toggle password visibility
+        const togglePassword = document.getElementById('togglePassword');
+        const password = document.getElementById('password');
+
+        togglePassword.addEventListener('click', function() {
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
+    </script>
 </body>
 </html>
