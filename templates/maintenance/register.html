@@ -78,13 +78,13 @@
         }
 
         .btn-register {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #1a365d;
             border: none;
             width: 100%;
             padding: 12px;
             color: white;
             font-weight: bold;
-            border-radius: 8px;
+            border-radius: 30px;
             font-size: 16px;
         }
         
@@ -100,6 +100,55 @@
             border: none;
         }
         
+        /* Input group with icon inside field */
+        .input-group-field {
+            margin-bottom: 15px;
+        }
+
+        .input-group-field label {
+            display: block !important;
+            margin-bottom: 5px !important;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            color: #999;
+            font-size: 16px;
+            z-index: 2;
+        }
+
+        .input-wrapper input, .input-wrapper select {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            border: 2px solid #d0d0d0;
+            border-radius: 20px;
+            font-size: 14px;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+
+        .input-wrapper input:focus, .input-wrapper select:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+        }
+
+        /* Red star for required fields */
+        .required-star {
+            color: #dc3545;
+            margin-left: 3px;
+        }
+
         .alert-danger {
             background-color: #f8d7da;
             color: #721c24;
@@ -166,34 +215,49 @@
         
         <form method="post">
             {% csrf_token %}
-            <div class="mb-3">
-                <label for="username" class="form-label">Username</label>
-                <input type="text" name="username" id="username" class="form-control" placeholder="Choose a username" required>
+            <div class="input-group-field">
+                <label for="username">Username <span class="required-star">*</span></label>
+                <div class="input-wrapper">
+                    <i class="fas fa-user input-icon"></i>
+                    <input type="text" name="username" id="username" placeholder="Choose a username" required>
+                </div>
             </div>
             
-            <div class="mb-3">
-                <label for="password1" class="form-label">Password</label>
-                <input type="password" name="password1" id="password1" class="form-control" placeholder="Create a password" required>
+            <div class="input-group-field">
+                <label for="password1">Password <span class="required-star">*</span></label>
+                <div class="input-wrapper">
+                    <i class="fas fa-lock input-icon"></i>
+                    <input type="password" name="password1" id="password1" placeholder="Create a password" required>
+                </div>
                 <small class="text-muted">Password must be at least 6 characters</small>
             </div>
             
-            <div class="mb-3">
-                <label for="password2" class="form-label">Confirm Password</label>
-                <input type="password" name="password2" id="password2" class="form-control" placeholder="Confirm your password" required>
+            <div class="input-group-field">
+                <label for="password2">Confirm Password <span class="required-star">*</span></label>
+                <div class="input-wrapper">
+                    <i class="fas fa-lock input-icon"></i>
+                    <input type="password" name="password2" id="password2" placeholder="Confirm your password" required>
+                </div>
             </div>
             
-            <div class="mb-3">
-                <label for="role" class="form-label">Role</label>
-                <select name="role" id="role" class="form-control">
-                    <option value="tenant">Tenant</option>
-                    <option value="manager">Property Manager</option>
-                    <option value="technician">Technician</option>
-                </select>
+            <div class="input-group-field">
+                <label for="role">Role <span class="required-star">*</span></label>
+                <div class="input-wrapper">
+                    <i class="fas fa-users input-icon"></i>
+                    <select name="role" id="role">
+                        <option value="tenant">Tenant</option>
+                        <option value="manager">Property Manager</option>
+                        <option value="technician">Technician</option>
+                    </select>
+                </div>
             </div>
             
-            <div class="mb-3">
-                <label for="apartment_number" class="form-label">Apartment Number (if Tenant)</label>
-                <input type="text" name="apartment_number" id="apartment_number" class="form-control" placeholder="e.g., 101, 202, 303">
+            <div class="input-group-field">
+                <label for="apartment_number">Apartment Number (if Tenant)</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-home input-icon"></i>
+                        <input type="text" name="apartment_number" id="apartment_number" placeholder="e.g., 101, 202, 303">
+                </div>
             </div>
             
             <button type="submit" class="btn btn-register">
