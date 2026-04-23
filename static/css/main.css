@@ -1,7 +1,7 @@
 /* ===== GLOBAL STYLES ===== */
 :root {
-    --primary-color: #4361ee;
-    --secondary-color: #3f37c9;
+    --primary-color: #1a365d;
+    --secondary-color: #142c4a;
     --success-color: #4caf50;
     --warning-color: #ff9800;
     --danger-color: #f44336;
@@ -181,7 +181,7 @@ body::before {
 
 .btn-primary:hover {
     transform: scale(1.05);
-    box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+    box-shadow: 0 5px 15px rgba(26, 54, 93, 0.4);
 }
 
 .btn-success {
