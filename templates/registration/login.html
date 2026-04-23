@@ -40,7 +40,7 @@
             position: relative;
             z-index: 1;
             width: 100%;
-            max-width: 420px;
+            max-width: 425px;
             padding: 20px;
         }
 
@@ -49,7 +49,7 @@
             border-radius: 12px;
             padding: 35px;
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-            border: 15px solid #d0d0d0;
+            border: 10px solid #d0d0d0;
         }
 
         .login-header {
@@ -57,20 +57,23 @@
             margin-bottom: 35px;
         }
 
-        .login-header h2 {
-            font-size: 28px;
+        .login-header h1 {
+            font-size: 90px;
             font-weight: 700;
-            color: #333;
-            margin-bottom: 5px;
-        }
-
-        .login-header h2 span {
-            color: #667eea;
+            color: #1a365d;
+            margin-bottom: -10px;
+            letter-spacing: 0px;
         }
 
         .login-header p {
+            font-size: 20px;
             color: #888;
-            font-size: 14px;
+            font-weight: 500;
+            margin-top: -20px;
+            display: block;
+            white-space: nowrap;
+            width: 100%;
+            text-align: center;
         }
 
         /* Input group - label ABOVE field */
@@ -132,7 +135,7 @@
         }
 
         .password-toggle:hover {
-            color: #667eea;
+            color: #1a365d;
         }
 
         .btn-login {
@@ -152,6 +155,7 @@
         .btn-login:hover {
             transform: scale(1.02);
             opacity: 0.95;
+            background: #142c4a;
         }
 
         .register-link {
@@ -162,7 +166,7 @@
         }
 
         .register-link a {
-            color: #667eea;
+            color: #1a365d;
             text-decoration: none;
             font-weight: 500;
         }
@@ -196,8 +200,15 @@
     <div class="login-container">
         <div class="login-box">
             <div class="login-header">
-                <h2>FixIt <span>Apartment Maintenance</span></h2>
-                <p>Login to your account</p>
+                <div style="display: flex; align-items: center; justify-content: center; gap: 12px;">
+                    <div class="brand-icon">
+                        <i class="fas fa-tools" style="font-size: 60px; color: #1a365d;"></i>
+                    </div>
+                    <h1 style="margin: 0;">FixIt</h1>
+                </div>
+                <div style="text-align: center;">
+                    <p>Apartment Maintenance</p>
+                </div>
             </div>
 
             <!-- Display error/success messages -->
