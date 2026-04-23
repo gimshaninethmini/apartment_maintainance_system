@@ -197,7 +197,6 @@
                     <i class="fas fa-tools" style="font-size: 60px; background: linear-gradient(135deg, #1a365d, #667eea); -webkit-background-clip: text; background-clip: text; color: transparent; display: inline-block;"></i>
                 </div>
                 <h1 style="font-size: 90px; font-weight: 700; color: #1a365d; margin: 0;">FixIt</h1>
-                <span style="font-size: 30px; font-weight: 500; color: #888; margin-left: 5px; align-self: flex-end; margin-bottom: 15px;"">Registration</span>
             </div>
             <p style="font-size: 35px; color: #888; margin-top: 5px;">Register New Account</p>
         </div>
@@ -216,7 +215,7 @@
         <form method="post">
             {% csrf_token %}
             <div class="input-group-field">
-                <label for="username">Username <span class="required-star">*</span></label>
+                <label for="username">Username </label>
                 <div class="input-wrapper">
                     <i class="fas fa-user input-icon"></i>
                     <input type="text" name="username" id="username" placeholder="Choose a username" required>
@@ -224,7 +223,7 @@
             </div>
             
             <div class="input-group-field">
-                <label for="password1">Password <span class="required-star">*</span></label>
+                <label for="password1">Password </label>
                 <div class="input-wrapper">
                     <i class="fas fa-lock input-icon"></i>
                     <input type="password" name="password1" id="password1" placeholder="Create a password" required>
@@ -233,7 +232,7 @@
             </div>
             
             <div class="input-group-field">
-                <label for="password2">Confirm Password <span class="required-star">*</span></label>
+                <label for="password2">Confirm Password </label>
                 <div class="input-wrapper">
                     <i class="fas fa-lock input-icon"></i>
                     <input type="password" name="password2" id="password2" placeholder="Confirm your password" required>
@@ -241,7 +240,7 @@
             </div>
             
             <div class="input-group-field">
-                <label for="role">Role <span class="required-star">*</span></label>
+                <label for="role">Role </span></label>
                 <div class="input-wrapper">
                     <i class="fas fa-users input-icon"></i>
                     <select name="role" id="role">
@@ -266,7 +265,7 @@
         </form>
         
         <div class="text-center mt-3">
-            <p>Already have an account? <a href="/">Login here</a></p>
+            <p>Already have an account? <a href="/" style="color: #1a365d;">Login here</a></p>
         </div>
     </div>
     
