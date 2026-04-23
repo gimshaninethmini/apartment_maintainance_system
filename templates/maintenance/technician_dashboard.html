@@ -312,6 +312,21 @@
             </div>
             <div>
                 {% if assignments %}
+                <!-- Filter Buttons -->
+                <div style="padding: 12px 24px; border-bottom: 1px solid #E5E7EB; display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button class="filter-btn active" data-filter="all" onclick="filterTasks('all')" style="padding: 6px 12px; border: 1px solid #7C3AED; background: #7C3AED; color: white; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.3s;">
+                        <i class="fas fa-list"></i> All ({{ total_count }})
+                    </button>
+                    <button class="filter-btn" data-filter="pending" onclick="filterTasks('pending')" style="padding: 6px 12px; border: 1px solid #E5E7EB; background: white; color: #6B7280; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.3s;">
+                        <i class="fas fa-hourglass-start"></i> Pending ({{ pending_count }})
+                    </button>
+                    <button class="filter-btn" data-filter="in_progress" onclick="filterTasks('in_progress')" style="padding: 6px 12px; border: 1px solid #E5E7EB; background: white; color: #6B7280; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.3s;">
+                        <i class="fas fa-spin fa-spinner"></i> In Progress ({{ in_progress_count }})
+                    </button>
+                    <button class="filter-btn" data-filter="completed" onclick="filterTasks('completed')" style="padding: 6px 12px; border: 1px solid #E5E7EB; background: white; color: #6B7280; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.3s;">
+                        <i class="fas fa-check-circle"></i> Completed ({{ completed_count }})
+                    </button>
+                </div>
                 <!-- Show table if there are tasks -->
                 <div class="table-responsive">
                     <table class="apt-table">
@@ -331,7 +346,7 @@
                             <!-- Loop through each assigned task -->
                             {% for item in assignments_with_logs %}
                             {% with assignment=item.assignment logs=item.logs %}
-                            <tr>
+                            <tr data-status="{{ assignment.request.status }}">
                                 <!-- Request ID -->
                                 <td><strong>#{{ assignment.request.id }}</strong></td>
                                 
@@ -542,6 +557,45 @@
             </div>
         </div>
     </div>
+
+    <!-- Filter Script -->
+    <script>
+        function filterTasks(status) {
+            // Get all table rows
+            const rows = document.querySelectorAll('.apt-table tbody tr[data-status]');
+            
+            // Get all filter buttons
+            const buttons = document.querySelectorAll('.filter-btn');
+            
+            // Remove active class from all buttons
+            buttons.forEach(btn => {
+                btn.style.background = 'white';
+                btn.style.color = '#6B7280';
+                btn.style.border = '1px solid #E5E7EB';
+            });
+            
+            // Add active class to clicked button
+            const activeBtn = document.querySelector(`.filter-btn[data-filter="${status}"]`);
+            if (activeBtn) {
+                activeBtn.style.background = '#7C3AED';
+                activeBtn.style.color = 'white';
+                activeBtn.style.border = '1px solid #7C3AED';
+            }
+            
+            // Show or hide rows based on status
+            rows.forEach(row => {
+                if (status === 'all') {
+                    row.style.display = 'table-row';
+                } else {
+                    if (row.getAttribute('data-status') === status) {
+                        row.style.display = 'table-row';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                }
+            });
+        }
+    </script>
 
     <!-- Bootstrap JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
