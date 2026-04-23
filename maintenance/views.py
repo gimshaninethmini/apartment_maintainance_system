@@ -108,7 +108,7 @@ def dashboard_view(request):
        requests = MaintenanceRequest.objects.filter(tenant=request.user).order_by('-created_at')
     
        total_count = requests.count()
-       pending_count = requests.filter(status='submitted').count()
+       pending_count = requests.filter(status='submitted',).count()
        assigned_count = requests.filter(status='assigned').count()
        in_progress_count = requests.filter(status='in_progress').count()
        completed_count = requests.filter(status='completed').count()
@@ -152,7 +152,7 @@ def dashboard_view(request):
         # Statistics counts - from full dataset (unfiltered)
         all_qs         = MaintenanceRequest.objects.all()
         total_count    = all_qs.count()
-        pending_count  = all_qs.filter(status='submitted').count()
+        pending_count = all_qs.filter(status__in=['submitted', 'pending']).count()
         reviewed_count = all_qs.filter(status='reviewed').count()
         assigned_count = all_qs.filter(status='pending').count()
         in_progress_count = all_qs.filter(status='in_progress').count()
@@ -374,6 +374,16 @@ def manager_request_detail_view(request, request_id):
         return HttpResponseForbidden("Only managers can view this page.")
 
     maintenance_request = get_object_or_404(MaintenanceRequest, id=request_id)
+    # Auto-mark as reviewed when manager opens the request
+    if maintenance_request.status == 'submitted':
+        maintenance_request.status = 'reviewed'
+        maintenance_request.save()
+        UpdateLog.objects.create(
+            request=maintenance_request,
+            updated_by=request.user,
+            status='reviewed',
+            notes='Reviewed by manager',
+        )
 
     technicians = User.objects.filter(
         userprofile__role='technician'
@@ -457,6 +467,7 @@ def manager_update_status_view(request, request_id):
 
     VALID_TRANSITIONS = {
         'submitted':   ['reviewed', 'cancelled'],
+        'pending':     ['reviewed', 'cancelled'],
         'reviewed':    ['assigned', 'cancelled'],
         'assigned':    ['in_progress', 'cancelled'],
         'in_progress': ['completed'],
