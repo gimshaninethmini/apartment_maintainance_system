@@ -1,6 +1,5 @@
 /* ============================================
    TECHNICIAN MODULE CUSTOM STYLING
-   Professional styles for technician dashboard
    ============================================ */
 
 /* ===== TABLE STYLING ===== */
@@ -119,7 +118,7 @@
 /* ===== UTILITY CLASSES ===== */
 /* Helper classes for common needs */
 
-/* Make text selectable (for copying) */
+/* Make text selectable  */
 .text-selectable {
     user-select: text;
 }
