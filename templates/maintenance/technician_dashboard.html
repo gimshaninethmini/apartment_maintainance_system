@@ -312,46 +312,47 @@
             </div>
             <div>
                 {% if assignments %}
-                <!-- Search Box & Sort Dropdown -->
-                <div style="padding: 16px 24px; border-bottom: 1px solid #E5E7EB; display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
-                    <input type="text" id="searchInput" placeholder="🔍 Search by tenant, apartment, or title..."
-                           style="flex: 1; min-width: 250px; padding: 10px 14px; border: 1px solid #E5E7EB; border-radius: 8px; font-size: 13px; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.2s;">
-
-                    <div class="dropdown">
-                        <button class="btn btn-link" type="button" data-bs-toggle="dropdown" style="padding: 10px 14px; border: 1px solid #E5E7EB; background: white; border-radius: 12px; font-size: 13px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 500; color: #374151; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-decoration: none; display: flex; align-items: center; gap: 8px;">
-                            <i class="fas fa-sort"></i> Sort by...
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#" onclick="handleSort('priority-desc'); return false;">
-                                <i class="fas fa-arrow-down me-2"></i>Priority (High → Low)
-                            </a></li>
-                            <li><a class="dropdown-item" href="#" onclick="handleSort('apartment'); return false;">
-                                <i class="fas fa-building me-2"></i>Apartment
-                            </a></li>
-                            <li><a class="dropdown-item" href="#" onclick="handleSort('date-new'); return false;">
-                                <i class="fas fa-calendar-alt me-2"></i>Date (Newest)
-                            </a></li>
-                            <li><a class="dropdown-item" href="#" onclick="handleSort('date-old'); return false;">
-                                <i class="fas fa-calendar-alt me-2"></i>Date (Oldest)
-                            </a></li>
-                        </ul>
+            <!-- Search & Filter — matches tenant/manager dashboard style -->
+            <div class="p-3">
+                <div class="row g-2">
+                    <div class="col-12">
+                        <div class="input-group">
+                            <span class="input-group-text" style="background:#F9FAFB;border-color:#E5E7EB;">
+                                <i class="fas fa-search" style="color:#9CA3AF;font-size:12px;"></i>
+                            </span>
+                            <input type="text" id="searchInput" class="form-control"
+                                placeholder="Search by tenant, apartment, or title...">
                     </div>
                 </div>
-                <!-- Filter Buttons -->
-                <div style="padding: 12px 24px; border-bottom: 1px solid #E5E7EB; display: flex; gap: 8px; flex-wrap: wrap;">
-                    <button class="filter-btn active" data-filter="all" onclick="filterTasks('all')" style="padding: 6px 12px; border: 1px solid #7C3AED; background: #7C3AED; color: white; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.3s;">
-                        <i class="fas fa-list"></i> All ({{ total_count }})
-                    </button>
-                    <button class="filter-btn" data-filter="pending" onclick="filterTasks('pending')" style="padding: 6px 12px; border: 1px solid #E5E7EB; background: white; color: #6B7280; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.3s;">
-                        <i class="fas fa-hourglass-start"></i> Pending ({{ pending_count }})
-                    </button>
-                    <button class="filter-btn" data-filter="in_progress" onclick="filterTasks('in_progress')" style="padding: 6px 12px; border: 1px solid #E5E7EB; background: white; color: #6B7280; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.3s;">
-                        <i class="fas fa-spin fa-spinner"></i> In Progress ({{ in_progress_count }})
-                    </button>
-                    <button class="filter-btn" data-filter="completed" onclick="filterTasks('completed')" style="padding: 6px 12px; border: 1px solid #E5E7EB; background: white; color: #6B7280; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.3s;">
-                        <i class="fas fa-check-circle"></i> Completed ({{ completed_count }})
+                <div class="col-6">
+                    <select id="statusFilter" class="form-select" onchange="filterTasks(this.value)">
+                        <option value="all">All Statuses</option>
+                        <option value="pending">Pending</option>
+                        <option value="in_progress">In Progress</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                </div>
+                <div class="col-6">
+                    <select id="priorityFilter" class="form-select" onchange="filterByPriority(this.value)">
+                        <option value="all">All Priorities</option>
+                        <option value="emergency">Emergency</option>
+                        <option value="high">High</option>
+                        <option value="medium">Medium</option>
+                        <option value="low">Low</option>
+                    </select>
+                </div>
+                <div class="col-6">
+                    <button class="btn btn-primary w-100" onclick="applyFilters()">
+                        <i class="fas fa-search me-1"></i>Apply Filters
                     </button>
                 </div>
+                <div class="col-6">
+                    <button class="btn btn-outline-secondary w-100" onclick="clearFilters()">
+                        <i class="fas fa-times me-1"></i>Clear
+                    </button>
+                </div>
+            </div>
+        </div>
                 <!-- Show table if there are tasks -->
                 <div class="table-responsive">
                     <table class="apt-table">
@@ -586,41 +587,42 @@
     <!-- Filter Script -->
     <script>
         function filterTasks(status) {
-            // Get all table rows
+            document.getElementById('statusFilter').value = status;
+            applyFilters();
+        }
+
+        function filterByPriority(priority) {
+            document.getElementById('priorityFilter').value = priority;
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const searchValue = document.getElementById('searchInput').value.toLowerCase();
+            const statusValue = document.getElementById('statusFilter').value;
+            const priorityValue = document.getElementById('priorityFilter').value;
             const rows = document.querySelectorAll('.apt-table tbody tr[data-status]');
 
-            // Get all filter buttons
-            const buttons = document.querySelectorAll('.filter-btn');
-
-            // Remove active class from all buttons
-            buttons.forEach(btn => {
-                btn.style.background = 'white';
-                btn.style.color = '#6B7280';
-                btn.style.border = '1px solid #E5E7EB';
-            });
-
-            // Add active class to clicked button
-            const activeBtn = document.querySelector(`.filter-btn[data-filter="${status}"]`);
-            if (activeBtn) {
-                activeBtn.style.background = '#7C3AED';
-                activeBtn.style.color = 'white';
-                activeBtn.style.border = '1px solid #7C3AED';
-            }
-
-            // Show or hide rows based on status
             rows.forEach(row => {
-                if (status === 'all') {
-                    row.style.display = 'table-row';
-                } else {
-                    if (row.getAttribute('data-status') === status) {
-                        row.style.display = 'table-row';
-                    } else {
-                        row.style.display = 'none';
-                    }
-                }
+                const title     = row.cells[1].innerText.toLowerCase();
+                const tenant    = row.cells[2].innerText.toLowerCase();
+                const apartment = row.cells[3].innerText.toLowerCase();
+                const priority  = row.cells[4].innerText.toLowerCase().trim();
+                const status    = row.getAttribute('data-status');
+
+                const matchesSearch   = title.includes(searchValue) || tenant.includes(searchValue) || apartment.includes(searchValue);
+                const matchesStatus   = statusValue === 'all' || status === statusValue;
+                const matchesPriority = priorityValue === 'all' || priority.includes(priorityValue);
+
+                row.style.display = (matchesSearch && matchesStatus && matchesPriority) ? 'table-row' : 'none';
             });
         }
 
+        function clearFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('statusFilter').value = 'all';
+            document.getElementById('priorityFilter').value = 'all';
+            applyFilters();
+        }
         // Search functionality
         document.getElementById('searchInput').addEventListener('keyup', function() {
             const searchValue = this.value.toLowerCase();
