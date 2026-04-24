@@ -177,7 +177,3 @@ pip install -r requirements.txt
 - Use Gunicorn/uWSGI
 
 ---
-
-## License
-
-[Add license here]
