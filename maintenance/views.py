@@ -145,7 +145,10 @@ def dashboard_view(request):
         # Status filter
         status_filter = request.GET.get('status', '')
         if status_filter:
-            all_requests = all_requests.filter(status=status_filter)
+            if status_filter == 'pending':
+                all_requests = all_requests.filter(status__in=['submitted', 'pending'])
+            else:
+                all_requests = all_requests.filter(status=status_filter)
     
         # Priority filter
         priority_filter = request.GET.get('priority', '')
@@ -157,7 +160,7 @@ def dashboard_view(request):
         total_count    = all_qs.count()
         pending_count = all_qs.filter(status__in=['submitted', 'pending']).count()
         reviewed_count = all_qs.filter(status='reviewed').count()
-        assigned_count = all_qs.filter(status='pending').count()
+        assigned_count = all_qs.filter(status='assigned').count()
         in_progress_count = all_qs.filter(status='in_progress').count()
         completed_count   = all_qs.filter(status='completed').count()
         cancelled_count   = all_qs.filter(status='cancelled').count()
@@ -448,13 +451,13 @@ def assign_technician_view(request, request_id):
             }
         )
 
-        maintenance_request.status = 'pending'
+        maintenance_request.status = 'assigned'
         maintenance_request.save()
 
         UpdateLog.objects.create(
             request=maintenance_request,
             updated_by=request.user,
-            status='pending',
+            status='assigned',
             notes=f'Assigned to {technician.username}. {request.POST.get("notes", "")}',
         )
 
