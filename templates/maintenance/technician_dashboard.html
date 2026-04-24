@@ -312,10 +312,17 @@
             </div>
             <div>
                 {% if assignments %}
-                <!-- Search Box -->
-                <div style="padding: 16px 24px; border-bottom: 1px solid #E5E7EB;">
+                <!-- Search Box & Sort Dropdown -->
+                <div style="padding: 16px 24px; border-bottom: 1px solid #E5E7EB; display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
                     <input type="text" id="searchInput" placeholder="🔍 Search by tenant, apartment, or title..."
-                           style="width: 100%; padding: 10px 14px; border: 1px solid #E5E7EB; border-radius: 8px; font-size: 13px; font-family: 'Plus Jakarta Sans', sans-serif;">
+                           style="flex: 1; min-width: 250px; padding: 10px 14px; border: 1px solid #E5E7EB; border-radius: 8px; font-size: 13px; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.2s;">
+
+                    <select id="sortSelect" style="padding: 10px 14px; border: 1px solid #7C3AED; background: white; border-radius: 8px; font-size: 13px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 600; color: #374151; cursor: pointer; transition: all 0.2s; box-shadow: 0 1px 3px rgba(124, 58, 237, 0.1);">
+                        <option value="none">↕ Sort by...</option>
+                        <option value="priority-desc">🔴 Priority (High → Low)</option>
+                        <option value="apartment">🏢 Apartment</option>
+                        <option value="date-new">📅 Date (Newest)</option>
+                    </select>
                 </div>
                 <!-- Filter Buttons -->
                 <div style="padding: 12px 24px; border-bottom: 1px solid #E5E7EB; display: flex; gap: 8px; flex-wrap: wrap;">
@@ -619,6 +626,42 @@
                     row.style.display = 'none';
                 }
             });
+        });
+
+        // Sort functionality
+        document.getElementById('sortSelect').addEventListener('change', function() {
+            const sortValue = this.value;
+            const tbody = document.querySelector('.apt-table tbody');
+            const rows = Array.from(document.querySelectorAll('.apt-table tbody tr[data-status]'));
+
+            if (sortValue === 'none') {
+                return;
+            }
+
+            rows.sort((a, b) => {
+                if (sortValue === 'priority-desc') {
+                    // Priority: Emergency > High > Medium > Low
+                    const priorityOrder = { 'emergency': 0, 'high': 1, 'medium': 2, 'low': 3 };
+                    const cellA = a.cells[4].innerText.toLowerCase().replace(/\s+/g, '');
+                    const cellB = b.cells[4].innerText.toLowerCase().replace(/\s+/g, '');
+                    const valueA = priorityOrder[cellA] || 999;
+                    const valueB = priorityOrder[cellB] || 999;
+                    return valueA - valueB;
+                } else if (sortValue === 'apartment') {
+                    // Sort by Apartment number
+                    const aptA = parseInt(a.cells[3].innerText) || 0;
+                    const aptB = parseInt(b.cells[3].innerText) || 0;
+                    return aptA - aptB;
+                } else if (sortValue === 'date-new') {
+                    // Newest first
+                    const dateA = new Date(a.cells[6].innerText);
+                    const dateB = new Date(b.cells[6].innerText);
+                    return dateB - dateA;
+                }
+            });
+
+            // Re-append sorted rows
+            rows.forEach(row => tbody.appendChild(row));
         });
     </script>
 
