@@ -606,20 +606,47 @@
             const statusValue = document.getElementById('statusFilter').value;
             const priorityValue = document.getElementById('priorityFilter').value;
             const rows = document.querySelectorAll('.apt-table tbody tr[data-status]');
-
+            let visibleCount = 0;
+            
+            // First, remove any existing no results message
+            let existingMsg = document.getElementById('noResultsMessage');
+            if (existingMsg) {
+                existingMsg.remove();
+            }
+            
             rows.forEach(row => {
                 const title     = row.cells[1].innerText.toLowerCase();
                 const tenant    = row.cells[2].innerText.toLowerCase();
                 const apartment = row.cells[3].innerText.toLowerCase();
                 const priority  = row.cells[4].innerText.toLowerCase().trim();
                 const status    = row.getAttribute('data-status');
-
+                
                 const matchesSearch   = title.includes(searchValue) || tenant.includes(searchValue) || apartment.includes(searchValue);
                 const matchesStatus   = statusValue === 'all' || status === statusValue;
                 const matchesPriority = priorityValue === 'all' || priority.includes(priorityValue);
-
-                row.style.display = (matchesSearch && matchesStatus && matchesPriority) ? 'table-row' : 'none';
+                
+                if (matchesSearch && matchesStatus && matchesPriority) {
+                    row.style.display = 'table-row';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
             });
+            
+            // Add no results message if no rows visible and there were rows to filter
+            if (visibleCount === 0 && rows.length > 0) {
+                const tbody = document.querySelector('.apt-table tbody');
+                const msgRow = document.createElement('tr');
+                msgRow.id = 'noResultsMessage';
+                msgRow.innerHTML = '<td colspan="8" class="text-center py-5">' +
+                    '<div class="empty-state">' +
+                    '<i class="fas fa-clipboard-list fa-2x mb-2 opacity-25"></i>' +
+                    '<h5 style="color:#6B7280; font-size:15px; font-weight:600;">No tasks found</h5>' +
+                    '<p style="font-size:13px; color:#9CA3AF;">Try adjusting your search or filter.</p>' +
+                    '</div>' +
+                    '<\/td>';
+                tbody.appendChild(msgRow);
+            }
         }
 
         function clearFilters() {
@@ -628,18 +655,17 @@
             document.getElementById('priorityFilter').value = 'all';
             applyFilters();
         }
+        
         // Search functionality
         document.getElementById('searchInput').addEventListener('keyup', function() {
             const searchValue = this.value.toLowerCase();
             const rows = document.querySelectorAll('.apt-table tbody tr[data-status]');
 
             rows.forEach(row => {
-                // Get text from Title, Tenant, and Apartment columns
                 const title = row.cells[1].innerText.toLowerCase();
                 const tenant = row.cells[2].innerText.toLowerCase();
                 const apartment = row.cells[3].innerText.toLowerCase();
 
-                // Check if search value matches any column
                 if (title.includes(searchValue) || tenant.includes(searchValue) || apartment.includes(searchValue)) {
                     row.style.display = 'table-row';
                 } else {
@@ -655,7 +681,6 @@
 
             rows.sort((a, b) => {
                 if (sortValue === 'priority-desc') {
-                    // Priority: Emergency > High > Medium > Low
                     const priorityOrder = { 'emergency': 0, 'high': 1, 'medium': 2, 'low': 3 };
                     const cellA = a.cells[4].innerText.toLowerCase().replace(/\s+/g, '');
                     const cellB = b.cells[4].innerText.toLowerCase().replace(/\s+/g, '');
@@ -663,24 +688,20 @@
                     const valueB = priorityOrder[cellB] || 999;
                     return valueA - valueB;
                 } else if (sortValue === 'apartment') {
-                    // Sort by Apartment number
                     const aptA = parseInt(a.cells[3].innerText) || 0;
                     const aptB = parseInt(b.cells[3].innerText) || 0;
                     return aptA - aptB;
                 } else if (sortValue === 'date-new') {
-                    // Newest first
                     const dateA = new Date(a.cells[6].innerText);
                     const dateB = new Date(b.cells[6].innerText);
                     return dateB - dateA;
                 } else if (sortValue === 'date-old') {
-                    // Oldest first
                     const dateA = new Date(a.cells[6].innerText);
                     const dateB = new Date(b.cells[6].innerText);
                     return dateA - dateB;
                 }
             });
 
-            // Re-append sorted rows
             rows.forEach(row => tbody.appendChild(row));
         }
     </script>
@@ -700,7 +721,6 @@
                     });
                 }
 
-                // Auto-close after 4 seconds
                 setTimeout(() => {
                     t.style.opacity = '0';
                     t.style.transform = 'translateX(100%)';

@@ -407,6 +407,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+
     // Search and Filter Functions
 function filterRequests() {
     let searchTerm = document.getElementById('searchInput').value.toLowerCase();
@@ -414,6 +415,12 @@ function filterRequests() {
     let priorityFilter = document.getElementById('priorityFilter').value;
     let rows = document.querySelectorAll('#requestsTable tbody tr');
     let visibleCount = 0;
+    
+    // First, remove any existing no results message
+    let existingMsg = document.getElementById('noResultsMessage');
+    if (existingMsg) {
+        existingMsg.remove();
+    }
     
     rows.forEach(row => {
         if (row.querySelector('td')) {
@@ -434,29 +441,22 @@ function filterRequests() {
         }
     });
     
-    // Show/hide no results message
-    let noResultsMsg = document.getElementById('noResultsMessage');
+    // Add no results message if no rows visible
     if (visibleCount === 0) {
-        if (!noResultsMsg) {
-            let tbody = document.querySelector('#requestsTable tbody');
-            let msgRow = document.createElement('tr');
-            msgRow.id = 'noResultsMessage';
-            msgRow.innerHTML = '<td colspan="4" class="text-center py-5">' +
-                '<div class="empty-state">' +
-                '<i class="fas fa-clipboard-list fa-2x mb-2 opacity-25"></i>' +
-                '<h5 style="color:#6B7280; font-size:15px; font-weight:600;">No requests found</h5>' +
-                '<p style="font-size:13px; color:#9CA3AF;">Try adjusting your search or filter.</p>' +
-                '</div>' +
-                '<\/td>';
-            tbody.appendChild(msgRow);
-        }
-    } else {
-        if (noResultsMsg) {
-            noResultsMsg.remove();
-        }
+        let tbody = document.querySelector('#requestsTable tbody');
+        let msgRow = document.createElement('tr');
+        msgRow.id = 'noResultsMessage';
+        msgRow.innerHTML = '<td colspan="4" class="text-center py-5">' +
+            '<div class="empty-state">' +
+            '<i class="fas fa-clipboard-list fa-2x mb-2 opacity-25"></i>' +
+            '<h5 style="color:#6B7280; font-size:15px; font-weight:600;">No requests found</h5>' +
+            '<p style="font-size:13px; color:#9CA3AF;">Try adjusting your search or filter.</p>' +
+            '</div>' +
+            '<\/td>';
+        tbody.appendChild(msgRow);
     }
 }
-    
+
     function applyFilters() {
         filterRequests();
     }
