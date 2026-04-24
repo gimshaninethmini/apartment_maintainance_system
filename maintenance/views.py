@@ -402,10 +402,11 @@ def manager_request_detail_view(request, request_id):
         existing_assignment = None
 
     return render(request, 'maintenance/manager_request_detail.html', {
-        'request':             maintenance_request,
+        'maintenance_request':             maintenance_request,
         'technicians':         technicians,
         'logs':                logs,
         'existing_assignment': existing_assignment,
+        'profile': request.user.userprofile,
     })
 
 

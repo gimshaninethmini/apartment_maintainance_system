@@ -207,7 +207,7 @@
                         This request is <strong>{{ request.status }}</strong> — no further updates possible.
                     </p>
                     {% else %}
-                    <form method="post" action="{% url 'manager_update_status' request.id %}">
+                    <form method="post" action="{% url 'manager_update_status' maintenance_request.id %}">
                         {% csrf_token %}
                         <div class="row g-2 align-items-end">
                             <div class="col-sm-4">
@@ -299,7 +299,7 @@
                     {% endif %}
 
                     {% if request.status != 'completed' and request.status != 'cancelled' %}
-                    <form method="post" action="{% url 'assign_technician' request.id %}">
+                    <form method="post" action="{% url 'assign_technician' maintenance_request.id %}">
                         {% csrf_token %}
                         <div class="mb-2">
                             <label class="form-label">Select Technician</label>
