@@ -205,18 +205,34 @@ def dashboard_view(request):
 
         status_filter = request.GET.get('status', '')
         
-        # Get update logs for each assignment
-        assignments_with_logs = []
+        # Get update logs for each assignment and organize by status
+        all_assignments_with_logs = []
+        pending_assignments_with_logs = []
+        in_progress_assignments_with_logs = []
+        completed_assignments_with_logs = []
+        
         for assignment in assignments:
             logs = UpdateLog.objects.filter(request=assignment.request).order_by('-created_at')
-            assignments_with_logs.append({
+            item = {
                 'assignment': assignment,
                 'logs': logs
-            })
+            }
+            all_assignments_with_logs.append(item)
+            
+            # Organize by status
+            if assignment.request.status == 'pending':
+                pending_assignments_with_logs.append(item)
+            elif assignment.request.status == 'in_progress':
+                in_progress_assignments_with_logs.append(item)
+            elif assignment.request.status == 'completed':
+                completed_assignments_with_logs.append(item)
         
         return render(request, 'maintenance/technician_dashboard.html', {
             'assignments': assignments,
-            'assignments_with_logs': assignments_with_logs,
+            'assignments_with_logs': all_assignments_with_logs,
+            'pending_assignments': pending_assignments_with_logs,
+            'in_progress_assignments': in_progress_assignments_with_logs,
+            'completed_assignments': completed_assignments_with_logs,
             'total_count': total_count,
             'pending_count': pending_count,
             'in_progress_count': in_progress_count,
