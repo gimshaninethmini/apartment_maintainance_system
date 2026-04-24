@@ -261,6 +261,14 @@
     
     <!-- ===== MAIN CONTENT AREA ===== -->
     <div class="page-content">
+                 <!-- ── Page Header with Welcome Message ── -->
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <div>
+                <h4 style="font-weight:700;margin:0;font-size:20px;">My Assigned Tasks</h4>
+                <p style="color:#6B7280;font-size:13px;margin:0;">Welcome back, {{ request.user.username }}</p>
+            </div>
+        </div>
+
         
         <!-- ===== STATISTICS SECTION (Clickable with Active Filter) ===== -->
         <div class="row mb-4 g-3">
@@ -322,7 +330,7 @@
                     </div>
                 </div>
                 <div class="col-6">
-                    <select id="statusFilter" class="form-select" onchange="filterTasks(this.value)">
+                    <select id="statusFilter" class="form-select">
                         <option value="all">All Statuses</option>
                         <option value="pending">Pending</option>
                         <option value="in_progress">In Progress</option>
@@ -330,7 +338,7 @@
                     </select>
                 </div>
                 <div class="col-6">
-                    <select id="priorityFilter" class="form-select" onchange="filterByPriority(this.value)">
+                    <select id="priorityFilter" class="form-select">
                         <option value="all">All Priorities</option>
                         <option value="emergency">Emergency</option>
                         <option value="high">High</option>
