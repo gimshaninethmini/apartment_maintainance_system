@@ -324,12 +324,36 @@
             notesField.value = '';
         }
     });
-    
+
     // Clear notes after form submission
     document.querySelector('form').addEventListener('submit', () => {
         setTimeout(() => {
             notesField.value = '';
         }, 100);
+    });
+
+    // Toast Auto-Close functionality (Working Version)
+    document.addEventListener('DOMContentLoaded', function() {
+        const toasts = document.querySelectorAll('.toast-alert');
+        toasts.forEach(t => {
+            const closeBtn = t.querySelector('.toast-close');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', () => {
+                    t.style.opacity = '0';
+                    t.style.transform = 'translateX(100%)';
+                    t.style.transition = 'all 0.4s';
+                    setTimeout(() => t.remove(), 400);
+                });
+            }
+
+            // Auto-close after 4 seconds
+            setTimeout(() => {
+                t.style.opacity = '0';
+                t.style.transform = 'translateX(100%)';
+                t.style.transition = 'all 0.4s';
+                setTimeout(() => t.remove(), 400);
+            }, 4000);
+        });
     });
 </script>
 
