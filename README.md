@@ -5,7 +5,7 @@ Django-based web application for managing apartment maintenance requests. Tenant
 ## Quick Start (5 min)
 
 ```bash
-git clone <repository-url>
+git clone <https://github.com/gimshaninethmini/apartment_maintainance_system>
 cd apartment_maintainance_system
 python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
