@@ -1,4 +1,4 @@
-# FixIT #Apartment Maintenance System
+# FixIt - Apartment Maintenance System
 
 Django-based web application for managing apartment maintenance requests. Tenants submit issues, managers assign technicians, technicians complete work.
 
