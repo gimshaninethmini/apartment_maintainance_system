@@ -317,12 +317,25 @@
                     <input type="text" id="searchInput" placeholder="🔍 Search by tenant, apartment, or title..."
                            style="flex: 1; min-width: 250px; padding: 10px 14px; border: 1px solid #E5E7EB; border-radius: 8px; font-size: 13px; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.2s;">
 
-                    <select id="sortSelect" style="padding: 10px 14px; border: 1px solid #E5E7EB; background: white; border-radius: 12px; font-size: 13px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 500; color: #374151; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
-                        <option value="none">↕ Sort by...</option>
-                        <option value="priority-desc">🔴 Priority (High → Low)</option>
-                        <option value="apartment">🏢 Apartment</option>
-                        <option value="date-new">📅 Date (Newest)</option>
-                    </select>
+                    <div class="dropdown">
+                        <button class="btn btn-link" type="button" data-bs-toggle="dropdown" style="padding: 10px 14px; border: 1px solid #E5E7EB; background: white; border-radius: 12px; font-size: 13px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 500; color: #374151; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-decoration: none; display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-sort"></i> Sort by...
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" onclick="handleSort('priority-desc'); return false;">
+                                <i class="fas fa-arrow-down me-2"></i>Priority (High → Low)
+                            </a></li>
+                            <li><a class="dropdown-item" href="#" onclick="handleSort('apartment'); return false;">
+                                <i class="fas fa-building me-2"></i>Apartment
+                            </a></li>
+                            <li><a class="dropdown-item" href="#" onclick="handleSort('date-new'); return false;">
+                                <i class="fas fa-calendar-alt me-2"></i>Date (Newest)
+                            </a></li>
+                            <li><a class="dropdown-item" href="#" onclick="handleSort('date-old'); return false;">
+                                <i class="fas fa-calendar-alt me-2"></i>Date (Oldest)
+                            </a></li>
+                        </ul>
+                    </div>
                 </div>
                 <!-- Filter Buttons -->
                 <div style="padding: 12px 24px; border-bottom: 1px solid #E5E7EB; display: flex; gap: 8px; flex-wrap: wrap;">
@@ -629,14 +642,9 @@
         });
 
         // Sort functionality
-        document.getElementById('sortSelect').addEventListener('change', function() {
-            const sortValue = this.value;
+        function handleSort(sortValue) {
             const tbody = document.querySelector('.apt-table tbody');
             const rows = Array.from(document.querySelectorAll('.apt-table tbody tr[data-status]'));
-
-            if (sortValue === 'none') {
-                return;
-            }
 
             rows.sort((a, b) => {
                 if (sortValue === 'priority-desc') {
@@ -657,12 +665,17 @@
                     const dateA = new Date(a.cells[6].innerText);
                     const dateB = new Date(b.cells[6].innerText);
                     return dateB - dateA;
+                } else if (sortValue === 'date-old') {
+                    // Oldest first
+                    const dateA = new Date(a.cells[6].innerText);
+                    const dateB = new Date(b.cells[6].innerText);
+                    return dateA - dateB;
                 }
             });
 
             // Re-append sorted rows
             rows.forEach(row => tbody.appendChild(row));
-        });
+        }
     </script>
 
     <!-- Toast Auto-Close Script (Working Version) -->
