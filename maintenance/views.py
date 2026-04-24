@@ -108,14 +108,16 @@ def dashboard_view(request):
        requests = MaintenanceRequest.objects.filter(tenant=request.user).order_by('-created_at')
     
        total_count = requests.count()
-       pending_count = requests.filter(status='submitted',).count()
-       assigned_count = requests.filter(status='assigned').count()
+       pending_count = requests.filter(status__in=['submitted', 'reviewed']).count()
+       assigned_count = requests.filter(status='pending').count()   
        in_progress_count = requests.filter(status='in_progress').count()
        completed_count = requests.filter(status='completed').count()
     
        paginator = Paginator(requests, 5)
        page_number = request.GET.get('page')
        page_obj = paginator.get_page(page_number)
+
+       status_filter = request.GET.get('status', '')
 
        return render(request, 'maintenance/tenant_dashboard.html', {
           'requests': page_obj,
@@ -125,6 +127,7 @@ def dashboard_view(request):
           'in_progress_count': in_progress_count,
           'completed_count': completed_count,
           'profile': profile,
+          'status_filter': status_filter,
       })
     
     elif profile.role == 'manager':
@@ -196,6 +199,8 @@ def dashboard_view(request):
         pending_count = assignments.filter(request__status='pending').count()
         in_progress_count = assignments.filter(request__status='in_progress').count()
         completed_count = assignments.filter(request__status='completed').count()
+
+        status_filter = request.GET.get('status', '')
         
         # Get update logs for each assignment
         assignments_with_logs = []
@@ -213,6 +218,7 @@ def dashboard_view(request):
             'pending_count': pending_count,
             'in_progress_count': in_progress_count,
             'completed_count': completed_count,
+            'status_filter': status_filter,
         })
     
     return HttpResponseForbidden("Invalid role")

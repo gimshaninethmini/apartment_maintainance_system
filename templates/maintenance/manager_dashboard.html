@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manager Dashboard — AptFix</title>
+    <title>Manager Dashboard — FixIt</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -22,7 +22,7 @@
         .nav-user { display: flex; align-items: center; gap: 10px; }
         .nav-avatar { width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.12); color: #fff; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
         .nav-username { color: rgba(255,255,255,0.8); font-size: 13px; font-weight: 500; }
-        .role-pill { background: rgba(124,58,237,0.3); color: #C4B5FD; font-size: 11px; font-weight: 600; padding: 2px 10px; border-radius: 20px; }
+        .role-pill { background: rgba(26,54,93,0.3); color: #8BA3C4; font-size: 11px; font-weight: 600; padding: 2px 10px; border-radius: 20px; }
 
         /* ── Page ── */
         .page-content { padding: 24px; }
@@ -44,13 +44,13 @@
         .stat-yellow .stat-icon { background:#FFFBEB; color:#F59E0B; }
         .stat-indigo .stat-icon { background:#EEF2FF; color:#4F46E5; }
         .stat-orange .stat-icon { background:#FFF7ED; color:#EA580C; }
-        .stat-purple .stat-icon { background:#F5F3FF; color:#7C3AED; }
+        .stat-purple .stat-icon { background:#EFF6FF; color:#1a365d; }
         .stat-green  .stat-icon { background:#F0FDF4; color:#16A34A; }
         .stat-blue.active-filter   { border-color:#3B82F6; }
         .stat-yellow.active-filter { border-color:#F59E0B; }
         .stat-indigo.active-filter { border-color:#4F46E5; }
         .stat-orange.active-filter { border-color:#EA580C; }
-        .stat-purple.active-filter { border-color:#7C3AED; }
+        .stat-purple.active-filter { border-color:#1a365d; }
         .stat-green.active-filter  { border-color:#16A34A; }
 
         /* ── Cards ── */
@@ -69,6 +69,7 @@
         .status-submitted   { background:#F3F4F6; color:#374151; }
         .status-reviewed    { background:#EFF6FF; color:#1D4ED8; }
         .status-assigned    { background:#FFFBEB; color:#B45309; }
+        .status-pending     { background:#FFF7ED; color:#EA580C; }
         .status-in_progress { background:#EDE9FE; color:#6D28D9; }
         .status-completed   { background:#F0FDF4; color:#15803D; }
         .status-cancelled   { background:#FEF2F2; color:#B91C1C; }
@@ -81,13 +82,13 @@
 
         /* ── Forms ── */
         .form-control, .form-select { font-size:13.5px; border-radius:8px; border:1px solid #E5E7EB; padding:8px 12px; font-family: 'Plus Jakarta Sans', sans-serif; }
-        .form-control:focus, .form-select:focus { border-color:#7C3AED; box-shadow:0 0 0 3px rgba(124,58,237,0.10); outline:none; }
+        .form-control:focus, .form-select:focus { border-color:#1a365d; box-shadow:0 0 0 3px rgba(26,54,93,0.10); outline:none; }
         .form-label { font-size:13px; font-weight:600; margin-bottom:5px; display:block; }
 
         /* ── Buttons ── */
         .btn { font-size:13px; font-weight:500; border-radius:8px; font-family: 'Plus Jakarta Sans', sans-serif; }
-        .btn-primary { background:#7C3AED; border-color:#7C3AED; color:#fff; }
-        .btn-primary:hover { background:#6D28D9; border-color:#6D28D9; color:#fff; }
+        .btn-primary { background:#1a365d; border-color:#1a365d; color:#fff; }
+        .btn-primary:hover { background:#142c4a; border-color:#142c4a; color:#fff; }
         .btn-logout { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color:#fff; font-size:13px; border-radius:8px; padding:6px 14px; text-decoration:none; transition:all 0.2s; }
         .btn-logout:hover { background: rgba(255,255,255,0.2); color:#fff; }
 
@@ -102,7 +103,7 @@
 
         /* ── Pagination ── */
         .page-link { font-size:13px; color:#374151; border-color:#E5E7EB; border-radius:8px !important; margin:0 2px; }
-        .page-item.active .page-link { background:#7C3AED; border-color:#7C3AED; }
+        .page-item.active .page-link { background:#1a365d; border-color:#1a365d; }
 
         /* ── Dropdown Menu Styling ── */
         .dropdown-menu {
@@ -130,7 +131,7 @@
             color: #111827 !important;
         }
         .dropdown-item:hover i {
-            color: #7C3AED !important;
+            color: #1a365d !important;
         }
         .dropdown-item.text-danger {
             color: #DC2626 !important;
@@ -151,6 +152,9 @@
         .empty-state { text-align:center; padding:60px 20px; color:#9CA3AF; }
         .empty-state i { font-size:48px; margin-bottom:16px; opacity:0.35; display:block; }
         .empty-state h5 { color:#6B7280; font-size:15px; font-weight:600; }
+        
+        /* ── Timeline Dots ── */
+        .timeline-dot { border: 3px solid #1a365d; }
     </style>
 </head>
 <body>
@@ -341,7 +345,7 @@
                 <i class="fas fa-clipboard-list me-2 text-muted"></i>
                 Maintenance Requests
                 {% if status_filter %}
-                — <span style="color:#7C3AED;font-weight:700;">{{ status_filter|title }}</span>
+                — <span style="color:#1a365d;font-weight:700;">{{ status_filter|title }}</span>
                 {% endif %}
             </span>
             <span style="font-size:12px;color:#9CA3AF;font-weight:400;">
