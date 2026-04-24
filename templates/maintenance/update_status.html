@@ -82,10 +82,33 @@
         Update Status
     </div>
     <div class="nav-user">
-        <div class="nav-avatar">{{ request.user.username|first|upper }}</div>
-        <div>
-            <div class="nav-username">{{ request.user.username }}</div>
-            <div class="role-pill">Technician</div>
+        <div class="dropdown">
+            <button class="d-flex align-items-center gap-2 btn btn-link text-white text-decoration-none"
+                    type="button" data-bs-toggle="dropdown"
+                    style="background: none; border: none;">
+                <div class="nav-avatar">{{ request.user.username|first|upper }}</div>
+                <span class="nav-username">{{ request.user.username }}</span>
+                <i class="fas fa-chevron-down" style="font-size: 10px; color: rgba(255,255,255,0.6);"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                    <div class="dropdown-item-text">
+                        <div><strong>{{ request.user.username }}</strong></div>
+                        <small class="text-muted">Role: Technician</small>
+                    </div>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="{% url 'dashboard' %}">
+                    <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                </a></li>
+                <li><a class="dropdown-item" href="{% url 'profile' %}">
+                    <i class="fas fa-id-card me-2"></i>Edit Profile
+                </a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item text-danger" href="{% url 'logout' %}">
+                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                </a></li>
+            </ul>
         </div>
         <a href="{% url 'dashboard' %}" class="btn-logout" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color:#fff; font-size:13px; border-radius:8px; padding:6px 14px; text-decoration:none; transition:all 0.2s;">
             <i class="fas fa-arrow-left"></i> Back
