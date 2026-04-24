@@ -1,11 +1,11 @@
-# Apartment Maintenance System
+# FixIT #Apartment Maintenance System
 
 Django-based web application for managing apartment maintenance requests. Tenants submit issues, managers assign technicians, technicians complete work.
 
 ## Quick Start (5 min)
 
 ```bash
-git clone <https://github.com/gimshaninethmini/apartment_maintainance_system>
+git clone < https://github.com/gimshaninethmini/apartment_maintainance_system >
 cd apartment_maintainance_system
 python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
