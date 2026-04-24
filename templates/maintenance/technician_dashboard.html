@@ -312,6 +312,11 @@
             </div>
             <div>
                 {% if assignments %}
+                <!-- Search Box -->
+                <div style="padding: 16px 24px; border-bottom: 1px solid #E5E7EB;">
+                    <input type="text" id="searchInput" placeholder="🔍 Search by tenant, apartment, or title..."
+                           style="width: 100%; padding: 10px 14px; border: 1px solid #E5E7EB; border-radius: 8px; font-size: 13px; font-family: 'Plus Jakarta Sans', sans-serif;">
+                </div>
                 <!-- Filter Buttons -->
                 <div style="padding: 12px 24px; border-bottom: 1px solid #E5E7EB; display: flex; gap: 8px; flex-wrap: wrap;">
                     <button class="filter-btn active" data-filter="all" onclick="filterTasks('all')" style="padding: 6px 12px; border: 1px solid #7C3AED; background: #7C3AED; color: white; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.3s;">
@@ -563,17 +568,17 @@
         function filterTasks(status) {
             // Get all table rows
             const rows = document.querySelectorAll('.apt-table tbody tr[data-status]');
-            
+
             // Get all filter buttons
             const buttons = document.querySelectorAll('.filter-btn');
-            
+
             // Remove active class from all buttons
             buttons.forEach(btn => {
                 btn.style.background = 'white';
                 btn.style.color = '#6B7280';
                 btn.style.border = '1px solid #E5E7EB';
             });
-            
+
             // Add active class to clicked button
             const activeBtn = document.querySelector(`.filter-btn[data-filter="${status}"]`);
             if (activeBtn) {
@@ -581,7 +586,7 @@
                 activeBtn.style.color = 'white';
                 activeBtn.style.border = '1px solid #7C3AED';
             }
-            
+
             // Show or hide rows based on status
             rows.forEach(row => {
                 if (status === 'all') {
@@ -595,6 +600,26 @@
                 }
             });
         }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('keyup', function() {
+            const searchValue = this.value.toLowerCase();
+            const rows = document.querySelectorAll('.apt-table tbody tr[data-status]');
+
+            rows.forEach(row => {
+                // Get text from Title, Tenant, and Apartment columns
+                const title = row.cells[1].innerText.toLowerCase();
+                const tenant = row.cells[2].innerText.toLowerCase();
+                const apartment = row.cells[3].innerText.toLowerCase();
+
+                // Check if search value matches any column
+                if (title.includes(searchValue) || tenant.includes(searchValue) || apartment.includes(searchValue)) {
+                    row.style.display = 'table-row';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
     </script>
 
     <!-- Toast Auto-Close Script (Working Version) -->
