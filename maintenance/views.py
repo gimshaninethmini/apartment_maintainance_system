@@ -108,7 +108,7 @@ def dashboard_view(request):
        requests = MaintenanceRequest.objects.filter(tenant=request.user).order_by('-created_at')
     
        total_count = requests.count()
-       pending_count = requests.filter(status='submitted',).count()
+       pending_count = requests.filter(status__in=['submitted', 'reviewed']).count()
        assigned_count = requests.filter(status='pending').count()   
        in_progress_count = requests.filter(status='in_progress').count()
        completed_count = requests.filter(status='completed').count()
