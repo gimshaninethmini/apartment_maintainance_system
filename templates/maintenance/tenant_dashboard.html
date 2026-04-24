@@ -8,7 +8,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-                * { box-sizing: border-box; }
+        * { box-sizing: border-box; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F4F6FB; margin: 0; }
 
         /* ── Navbar ── */
@@ -18,11 +18,7 @@
             justify-content: space-between; position: sticky; top: 0; z-index: 100;
         }
         .nav-brand { display: flex; align-items: center; gap: 10px; color: #fff; font-size: 17px; font-weight: 700; }
-<<<<<<< Updated upstream
-        .nav-brand .brand-icon { width: 34px; height: 34px; background: #fff; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; }
-=======
         .nav-brand .brand-icon { width: 34px; height: 34px; background: #ffffff; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; }
->>>>>>> Stashed changes
         .nav-user { display: flex; align-items: center; gap: 10px; }
         .nav-avatar { width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.12); color: #fff; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
         .nav-username { color: rgba(255,255,255,0.8); font-size: 13px; font-weight: 500; }
@@ -36,6 +32,7 @@
             padding: 18px; display: flex; align-items: center; gap: 14px;
             transition: all 0.2s;
             text-decoration: none; color: inherit;
+            cursor: pointer;
         }
         .stat-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.10); transform: translateY(-2px); }
         .stat-icon { width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
@@ -48,7 +45,15 @@
         .stat-purple .stat-icon { background:#F5F3FF; color:#7C3AED; }
         .stat-green  .stat-icon { background:#F0FDF4; color:#16A34A; }
 
-
+        /* Active filter styles */
+        .stat-card.active-filter {
+            border: 2px solid;
+        }
+        .stat-blue.active-filter { border-color: #3B82F6; }
+        .stat-yellow.active-filter { border-color: #F59E0B; }
+        .stat-orange.active-filter { border-color: #EA580C; }
+        .stat-purple.active-filter { border-color: #7C3AED; }
+        .stat-green.active-filter  { border-color: #16A34A; }
 
         /* ── Cards ── */
         .apt-card { background:#fff; border-radius:14px; border:1px solid #E5E7EB; box-shadow:0 1px 4px rgba(0,0,0,0.06); }
@@ -217,52 +222,52 @@
         </a>
     </div>
 
-    <!-- ── Stat Cards ── -->
+    <!-- ── Stat Cards (Clickable with Active Filter) ── -->
     <div class="row g-3 mb-4">
         <div class="col">
-            <div class="stat-card stat-blue">
+            <a href="?status=" class="stat-card stat-blue {% if not status_filter %}active-filter{% endif %}">
                 <div class="stat-icon"><i class="fas fa-list-alt"></i></div>
                 <div>
                     <div class="stat-label">Total</div>
                     <div class="stat-value">{{ total_count|default:0 }}</div>
                 </div>
-            </div>
+            </a>
         </div>
         <div class="col">
-            <div class="stat-card stat-yellow">
+            <a href="?status=submitted" class="stat-card stat-yellow {% if status_filter == 'submitted' %}active-filter{% endif %}">
                 <div class="stat-icon"><i class="fas fa-clock"></i></div>
                 <div>
                     <div class="stat-label">Pending</div>
                     <div class="stat-value">{{ pending_count|default:0 }}</div>
                 </div>
-            </div>
+            </a>
         </div>
         <div class="col">
-            <div class="stat-card stat-orange">
+            <a href="?status=pending" class="stat-card stat-orange {% if status_filter == 'pending' %}active-filter{% endif %}">
                 <div class="stat-icon"><i class="fas fa-user-check"></i></div>
                 <div>
                     <div class="stat-label">Assigned</div>
                     <div class="stat-value">{{ assigned_count|default:0 }}</div>
                 </div>
-            </div>
+            </a>
         </div>
         <div class="col">
-            <div class="stat-card stat-purple">
+            <a href="?status=in_progress" class="stat-card stat-purple {% if status_filter == 'in_progress' %}active-filter{% endif %}">
                 <div class="stat-icon"><i class="fas fa-spinner"></i></div>
                 <div>
                     <div class="stat-label">In Progress</div>
                     <div class="stat-value">{{ in_progress_count|default:0 }}</div>
                 </div>
-            </div>
+            </a>
         </div>
         <div class="col">
-            <div class="stat-card stat-green">
+            <a href="?status=completed" class="stat-card stat-green {% if status_filter == 'completed' %}active-filter{% endif %}">
                 <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
                 <div>
                     <div class="stat-label">Completed</div>
                     <div class="stat-value">{{ completed_count|default:0 }}</div>
                 </div>
-            </div>
+            </a>
         </div>
     </div>
 
@@ -354,11 +359,11 @@
                                 {% endif %}
                             </span>
                         </td>
-                        <td style="font-size:12px;color:#6B7280;">{{ request.created_at|date:"M d, Y" }}</td>
+                        <td style="font-size:12px;color:#6B7280;">{{ request.created_at|date:"M d, Y" }}<\/td>
                     </tr>
                     {% endfor %}
                 </tbody>
-            
+            68d
         </div>
 
         <!-- Pagination -->
